@@ -1,0 +1,122 @@
+###
+
+POST http://localhost:3000/posts
+Content-Type: application/json
+Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ODIzNDAzOTFjOGU0ZjAxOGFjOGIzYiIsImlhdCI6MTczNjU4NjI3NiwiZXhwIjoxNzM2NjA0Mjc2fQ.N3CXuOM41vA3MQEt9R-Iz1VnBVSzsaqkfVZ6sdDEk4c
+
+{
+    "title": "A really new post",
+    "content": "Here is my post content"
+}
+
+###
+
+GET http://localhost:3000/posts
+
+###
+
+GET http://localhost:3000/posts/6766ae86b634082a42ed607d
+
+###
+
+GET http://localhost:3000/posts/sender=/someSenderId
+
+###
+
+PUT http://localhost:3000/posts/6766ae86b634082a42ed607d
+Content-Type: application/json
+Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ODEyNTc0NDA2ZjljYzc2MGE4OTYzZCIsImlhdCI6MTczNjUyMDk5NSwiZXhwIjoxNzM2NTI0NTk1fQ.0sLDABs_LX9YKIMWgRMzq1Od4mYDJVhedVZHOYjjaXI
+
+{
+    "content": "new content"
+}
+
+###
+
+POST http://localhost:3000/comments
+Content-Type: application/json
+Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ODEyNTc0NDA2ZjljYzc2MGE4OTYzZCIsImlhdCI6MTczNjUyMDk5NSwiZXhwIjoxNzM2NTI0NTk1fQ.0sLDABs_LX9YKIMWgRMzq1Od4mYDJVhedVZHOYjjaXI
+
+{
+    "postId": "67790cf4f387c4e772cceb43",
+    "message": "Here is my comment 2"
+}
+
+###
+
+GET http://localhost:3000/comments
+
+###
+
+GET http://localhost:3000/comments/6766acb7b634082a42ed6075
+
+###
+
+DELETE  http://localhost:3000/comments/674624a98092baae4ea92065
+Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ODEyNTc0NDA2ZjljYzc2MGE4OTYzZCIsImlhdCI6MTczNjUyMDk5NSwiZXhwIjoxNzM2NTI0NTk1fQ.0sLDABs_LX9YKIMWgRMzq1Od4mYDJVhedVZHOYjjaXI
+
+###
+
+PUT http://localhost:3000/comments/6766adb810a719e6dfaaa1d4
+Content-Type: application/json
+Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ODEyNTc0NDA2ZjljYzc2MGE4OTYzZCIsImlhdCI6MTczNjUyMDk5NSwiZXhwIjoxNzM2NTI0NTk1fQ.0sLDABs_LX9YKIMWgRMzq1Od4mYDJVhedVZHOYjjaXI
+
+{
+    "message": "new content"
+}
+
+###
+
+GET http://localhost:3000/users
+
+###
+
+GET http://localhost:3000/users/6782a5c30b9d4b49fd1dd1c9
+###
+
+DELETE  http://localhost:3000/users
+Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ODJhNWMzMGI5ZDRiNDlmZDFkZDFjOSIsImlhdCI6MTczNjYxNTM4NiwiZXhwIjoxNzM2NjMzMzg2fQ.0NUJm4u_koUpogzP1c5lR1DKdVUrLV8cl6X4ZCucdgU
+
+###
+
+PUT http://localhost:3000/users
+Content-Type: application/json
+Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ODJhNWMzMGI5ZDRiNDlmZDFkZDFjOSIsImlhdCI6MTczNjYxNTM4NiwiZXhwIjoxNzM2NjMzMzg2fQ.0NUJm4u_koUpogzP1c5lR1DKdVUrLV8cl6X4ZCucdgU
+
+{
+    "email": "toto@gmail.com",
+    "password": "1234"
+}
+
+###
+
+POST http://localhost:3000/auth/registration
+Content-Type: application/json
+
+{
+    "username": "tom",
+    "email": "tom@gmail.com",
+    "password": "12345"
+}
+
+###
+
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "username": "tom",
+    "password": "12345"
+}
+
+###
+
+POST http://localhost:3000/auth/refreshToken
+Content-Type: application/json
+Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ODIzNDAzOTFjOGU0ZjAxOGFjOGIzYiIsImlhdCI6MTczNjU4NjI3Nn0.GZ-E_verS10Ii3DP55cHUI57DcNgWYAs1BVwGMXnvT4
+
+###
+
+POST http://localhost:3000/auth/logout
+Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ODIzNDAzOTFjOGU0ZjAxOGFjOGIzYiIsImlhdCI6MTczNjU4NjQ1NX0.bUOOW8NovKZVS_UBzl0d_6lHqFzpzI7fw6SiqrAFxT8
+Content-Type: application/json
