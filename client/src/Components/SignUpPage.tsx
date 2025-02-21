@@ -11,10 +11,13 @@ import {
   Card as MuiCard,
   Avatar,
   IconButton,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import { saveNewUser } from "../Services/serverRequests";
+import axios from "axios";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -35,10 +38,19 @@ const SignUpPage = () => {
   const [password, setPassword] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [fieldsError, setFieldsError] = useState<Record<string, string>>({});
+  const [requestErrorMessage, setRequestErrorMessage] = useState<string>("");
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validateInputs()) {
-      saveNewUser({ username, email, password, name });
+      const response = await saveNewUser({ username, email, password, name });
+
+      if (axios.isAxiosError(response)) {
+        if (response.status === 409)
+          setRequestErrorMessage("שים לב, שם המשתמש כבר קיים");
+        else setRequestErrorMessage("קיימת תקלה בשרת, המשתמש לא נשמר");
+      } else {
+        console.log(response);
+      }
     }
   };
 
@@ -216,6 +228,22 @@ const SignUpPage = () => {
           </Typography>
         </Box>
       </Card>
+
+      <Snackbar
+        open={!!requestErrorMessage.length}
+        autoHideDuration={3000}
+        onClose={() => setRequestErrorMessage("")}
+        message={requestErrorMessage}
+      >
+        <Alert
+          onClose={() => setRequestErrorMessage("")}
+          severity="warning"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {requestErrorMessage}
+        </Alert>
+      </Snackbar>
     </Stack>
   );
 };
