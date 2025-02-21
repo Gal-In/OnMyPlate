@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2020", // Set the ECMAScript target version
+    "module": "CommonJS", // Use CommonJS for Node.js
+    "outDir": "./dist", // Output directory for compiled JavaScript
+    "rootDir": "./src", // Root directory for TypeScript files
+    "strict": true, // Enable strict type-checking
+    "esModuleInterop": true, // Enable compatibility with CommonJS
+    "resolveJsonModule": true // Allow importing JSON files
+  },
+  "include": ["src/**/*"], // Include all files in the src folder
+  "exclude": ["node_modules", "**/*.test.ts"] // Exclude node_modules
+}
