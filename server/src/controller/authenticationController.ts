@@ -127,9 +127,15 @@ const logout = async (req: Request, res: Response) => {
 };
 
 const registration = async (req: Request, res: Response) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, name } = req.body;
 
-  if (!username?.length || !email?.length || !password?.length) {
+  if (
+    !username?.length ||
+    !email?.length ||
+    !password?.length ||
+    !name?.length
+  ) {
+    console.log("hello");
     res.status(400).send("user details are missing");
     return;
   }
@@ -137,16 +143,18 @@ const registration = async (req: Request, res: Response) => {
   try {
     const user = await userModel.findOne({ username });
     if (user) {
-      res.status(400).send("user already exist");
+      res.status(409).send("user already exist");
       return;
     }
 
     const encryptedPassword = await encryptPassword(password);
     const newUser = await userModel.create({
+      name,
       username,
       email,
       password: encryptedPassword,
     });
+
     res.status(201).send(newUser);
   } catch (error) {
     res.status(400).send(error);

@@ -8,16 +8,17 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
+import cors from "cors";
 
 const options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "Assignment",
+      title: "On My Plate",
       version: "1.0.0",
       description: "rest server description",
     },
-    servers: [{ url: "http://localhost:3000" }],
+    servers: [{ url: "http://localhost:8000" }],
   },
   apis: ["./src/routes/*.ts"],
 };
@@ -31,6 +32,7 @@ db.once("open", () => console.log("connected to db"));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
 
 app.use("/posts", postRoutes);
 app.use("/comments", commentsRoutes);

@@ -3,6 +3,7 @@ const { Schema } = mongoose;
 
 export interface User {
   _id: mongoose.Types.ObjectId;
+  name: string;
   username: string;
   email: string;
   password: string;
@@ -10,9 +11,14 @@ export interface User {
 }
 
 const userSchema = new Schema<User>({
+  name: {
+    type: String,
+    required: true,
+  },
   username: {
     type: String,
     required: true,
+    unique: true,
   },
   email: {
     type: String,

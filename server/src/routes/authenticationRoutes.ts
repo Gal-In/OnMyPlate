@@ -105,14 +105,19 @@ router.post("/logout", authentication.logout);
  *                  schema:
  *                      type: object
  *                      required:
+ *                        - user
  *                        - username
  *                        - email
  *                        - password
  *                      properties:
+ *                          name:
+ *                              type: string
+ *                              description: The user name
+ *                              example: tom
  *                          username:
  *                              type: string
  *                              description: The user username
- *                              example: tom
+ *                              example: tom123
  *                          email:
  *                              type: string
  *                              description: The user email
