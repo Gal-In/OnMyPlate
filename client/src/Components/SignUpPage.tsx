@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
+import { saveNewUser } from "../Services/serverRequests";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -30,13 +31,15 @@ const Card = styled(MuiCard)(({ theme }) => ({
 
 const SignUpPage = () => {
   const [name, setName] = useState<string>("");
-  const [userName, setUserName] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [fieldsError, setFieldsError] = useState<Record<string, string>>({});
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    // TOOD: send new user to the server, get back tokens
+  const handleSubmit = () => {
+    if (!validateInputs()) {
+      saveNewUser({ username, email, password, name });
+    }
   };
 
   const validateInputs = () => {
@@ -45,8 +48,8 @@ const SignUpPage = () => {
     if (!/^[A-Za-zא-ת]{2,}$/.test(name))
       errorObject.name = "שם חייב להכיל 2 אותיות לפחות, ללא מספרים";
 
-    if (!/^\S{6,}$/.test(userName))
-      errorObject.userName = "שם משתמש חייב להכיל לפחות 6 אותיות ללא רווחים";
+    if (!/^\S{3,}$/.test(username))
+      errorObject.username = "שם משתמש חייב להכיל לפחות 3 אותיות ללא רווחים";
 
     if (!/^(?!.*\s).{2,}@gmail\.com$/.test(email))
       errorObject.email = "נא הזן כתובת מייל תקינה";
@@ -55,6 +58,8 @@ const SignUpPage = () => {
       errorObject.password = "סיסמה חייבת להכיל לפחות 6 תווים ללא רווחים";
 
     setFieldsError(errorObject);
+
+    return !!Object.keys(errorObject).length;
   };
 
   return (
@@ -116,7 +121,6 @@ const SignUpPage = () => {
 
         <Box
           component="form"
-          onSubmit={handleSubmit}
           noValidate
           autoComplete="off"
           sx={{
@@ -145,16 +149,16 @@ const SignUpPage = () => {
               slotProps={{ htmlInput: { maxLength: 20 } }}
             />
             <TextField
-              error={!!fieldsError.userName}
-              helperText={fieldsError.userName ?? ""}
-              id="userName"
+              error={!!fieldsError.username}
+              helperText={fieldsError.username ?? ""}
+              id="username"
               autoFocus
               fullWidth
               variant="outlined"
-              color={fieldsError.userName ? "error" : "primary"}
+              color={fieldsError.username ? "error" : "primary"}
               label="שם משתמש"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               slotProps={{ htmlInput: { maxLength: 15 } }}
             />
             <TextField
@@ -187,7 +191,7 @@ const SignUpPage = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </FormControl>
-          <Button fullWidth variant="contained" onClick={validateInputs}>
+          <Button fullWidth variant="contained" onClick={handleSubmit}>
             הרשמה
           </Button>
         </Box>
