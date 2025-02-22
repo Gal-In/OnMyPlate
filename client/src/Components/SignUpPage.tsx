@@ -13,11 +13,16 @@ import {
   IconButton,
   Snackbar,
   Alert,
+  Tooltip,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
-import { saveNewUser } from "../Services/serverRequests";
+import {
+  saveNewUser,
+  uploadUserProfilePicture,
+} from "../Services/serverRequests";
 import axios from "axios";
+import dataUrlToFile from "../Services/fileConvertorService";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -38,6 +43,7 @@ const SignUpPage = () => {
   const [password, setPassword] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [fieldsError, setFieldsError] = useState<Record<string, string>>({});
+  const [imageUrl, setImageUrl] = useState<null | string>(null);
   const [requestErrorMessage, setRequestErrorMessage] = useState<string>("");
 
   const handleSubmit = async () => {
@@ -49,7 +55,15 @@ const SignUpPage = () => {
           setRequestErrorMessage("שים לב, שם המשתמש כבר קיים");
         else setRequestErrorMessage("קיימת תקלה בשרת, המשתמש לא נשמר");
       } else {
-        console.log(response);
+        if (imageUrl) {
+          const file = await dataUrlToFile(imageUrl, username);
+
+          try {
+            await uploadUserProfilePicture(file);
+          } catch (e) {
+            setRequestErrorMessage("קיימת תקלה בשרת, תמונת הפרופיל לא נשמרה");
+          }
+        }
       }
     }
   };
@@ -72,6 +86,20 @@ const SignUpPage = () => {
     setFieldsError(errorObject);
 
     return !!Object.keys(errorObject).length;
+  };
+
+  const handleCapture = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const target = event.target;
+    const file = target.files?.[0];
+
+    if (!file) return;
+
+    const fileReader = new FileReader();
+
+    fileReader.readAsDataURL(file);
+    fileReader.onload = (e) => {
+      if (e.target?.result) setImageUrl(e.target?.result as string);
+    };
   };
 
   return (
@@ -104,7 +132,7 @@ const SignUpPage = () => {
             }}
           >
             <Avatar
-              src="/projectLogo.svg"
+              src={imageUrl ?? "/projectLogo.svg"}
               alt="Profile"
               sx={{
                 height: 100,
@@ -113,21 +141,32 @@ const SignUpPage = () => {
                 "& img": { objectFit: "contain" },
               }}
             />
-
-            <IconButton
-              sx={{
-                position: "absolute",
-                bottom: -10,
-                left: -10,
-                backgroundColor: "#fff",
-                border: "1px solid #ccc",
-                "&:hover": {
-                  backgroundColor: "#f0f0f0",
-                },
-              }}
-            >
-              <SwapHorizIcon sx={{ fontSize: 16 }} />
-            </IconButton>
+            <input
+              accept="image/png, image/jpeg, image/jpg, image/svg+xml"
+              id="add-file"
+              onChange={handleCapture}
+              type="file"
+              hidden
+            />
+            <label htmlFor="add-file">
+              <Tooltip title="החלף תמונת פרופיל">
+                <IconButton
+                  component="span"
+                  sx={{
+                    position: "absolute",
+                    bottom: -10,
+                    left: -10,
+                    backgroundColor: "#fff",
+                    border: "1px solid #ccc",
+                    "&:hover": {
+                      backgroundColor: "#f0f0f0",
+                    },
+                  }}
+                >
+                  <SwapHorizIcon sx={{ fontSize: 16 }} />
+                </IconButton>
+              </Tooltip>
+            </label>
           </div>
         </div>
 

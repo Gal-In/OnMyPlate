@@ -3,6 +3,7 @@ import postRoutes from "./routes/postRoutes";
 import commentsRoutes from "./routes/commentsRoutes";
 import usersRoutes from "./routes/userRoutes";
 import authenticationRoutes from "./routes/authenticationRoutes";
+import fileRoutes from "./routes/filesRoutes";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
@@ -38,6 +39,9 @@ app.use("/posts", postRoutes);
 app.use("/comments", commentsRoutes);
 app.use("/users", usersRoutes);
 app.use("/auth", authenticationRoutes);
+
+app.use("/file", fileRoutes);
+app.use("/media", express.static("media"));
 
 const specs = swaggerJsDoc(options);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
