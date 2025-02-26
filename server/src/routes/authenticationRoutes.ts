@@ -142,6 +142,41 @@ router.post("/registration", authentication.registration);
 
 /**
  * @swagger
+ * /auth/googleRegistration:
+ *   post:
+ *      summary: Register a new user from google
+ *      description: Create a new user from his google details, and retrives it back
+ *      tags:
+ *          - Authentication
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      required:
+ *                        - userToken
+ *                      properties:
+ *                          userToken:
+ *                              type: string
+ *                              description: The user google token
+ *                              example: ya29.a0AeXRPp41OtyWEMBrCtA45ntxD3KNBEUZ326I541_-SRJdTpBYZKPMyO6UJlR81zRzJaXKn3wp1sAi3V4PKVJRHWg9SwnMfo7WIF8nGCS_7fFHHfcEbvKWl5cgmShar8_7j8lbyEFGXRVoVnto1y3qk_Z61YdiUcJL0EOFHOIaCgYKAaUSARESFQHGX2MiT4TAZl9zUVBK_rN21d3CfQ0175
+ *      responses:
+ *          201:
+ *              description: New User
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/User'
+ *          400:
+ *              description: Invalid input
+ *          500:
+ *              description: Server Error
+ */
+router.post("/googleRegistration", authentication.googleRegistration);
+
+/**
+ * @swagger
  * /auth/refreshtoken:
  *   post:
  *      summary: Refresh token

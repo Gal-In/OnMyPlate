@@ -8,6 +8,10 @@ import rtlPlugin from "stylis-plugin-rtl";
 import { prefixer } from "stylis";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+
+const GOOGLE_CLIENT_ID =
+  "593169361117-6o3lgqtkfplns34gj0g2k3ququvv3527.apps.googleusercontent.com";
 
 const theme = createTheme({
   direction: "rtl",
@@ -38,7 +42,9 @@ root.render(
   <React.StrictMode>
     <CacheProvider value={cacheRtl}>
       <ThemeProvider theme={theme}>
-        <App />
+        <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+          <App />
+        </GoogleOAuthProvider>
       </ThemeProvider>
     </CacheProvider>
   </React.StrictMode>

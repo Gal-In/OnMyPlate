@@ -18,11 +18,13 @@ import {
 import { styled } from "@mui/material/styles";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import {
+  addGoogleUser,
   saveNewUser,
   uploadUserProfilePicture,
 } from "../Services/serverRequests";
 import axios from "axios";
 import dataUrlToFile from "../Services/fileConvertorService";
+import { useGoogleLogin } from "@react-oauth/google";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -46,17 +48,24 @@ const SignUpPage = () => {
   const [imageUrl, setImageUrl] = useState<null | string>(null);
   const [requestErrorMessage, setRequestErrorMessage] = useState<string>("");
 
+  const googleLogin = useGoogleLogin({
+    onSuccess: (credentials) => addGoogleUser(credentials.access_token),
+  });
+
   const handleSubmit = async () => {
     if (!validateInputs()) {
       const response = await saveNewUser({ username, email, password, name });
 
       if (axios.isAxiosError(response)) {
-        if (response.status === 409)
-          setRequestErrorMessage("שים לב, שם המשתמש כבר קיים");
-        else setRequestErrorMessage("קיימת תקלה בשרת, המשתמש לא נשמר");
+        if (response.status === 409) {
+          const field = response.response?.data.includes("email")
+            ? "האימייל"
+            : "שם המשתמש";
+          setRequestErrorMessage(`שים לב, ${field} כבר קיים`);
+        } else setRequestErrorMessage("קיימת תקלה בשרת, המשתמש לא נשמר");
       } else {
         if (imageUrl) {
-          const file = await dataUrlToFile(imageUrl, username);
+          const file = await dataUrlToFile(imageUrl, email);
 
           try {
             await uploadUserProfilePicture(file);
@@ -251,14 +260,25 @@ const SignUpPage = () => {
           <Button
             fullWidth
             variant="outlined"
-            onClick={() => alert("חחחח עוד לא קיים")}
+            onClick={() => googleLogin()}
+            startIcon={
+              <Avatar
+                src={"/googleLogo.png"}
+                sx={{
+                  maxWidth: "2rem",
+                  maxHeight: "2rem",
+                  objectFit: "contain",
+                  paddingRight: 1,
+                }}
+              />
+            }
           >
-            הירשם עם גוגל
+            הירשם באמצעות גוגל
           </Button>
           <Typography sx={{ textAlign: "center" }}>
             יש לך כבר משתמש?
             <Link
-              // href="/material-ui/getting-started/templates/sign-in/"
+              href="http://localhost:3000/"
               variant="body2"
               sx={{ alignSelf: "center" }}
             >

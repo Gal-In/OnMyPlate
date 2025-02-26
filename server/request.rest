@@ -117,6 +117,19 @@ Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ODIzNDAzOTFj
 
 ###
 
+POST http://localhost:8000/auth/googleRegistration
+Content-Type: application/json
+
+{
+    "userToken": "ya29.a0AeXRPp41OtyWEMBrCtA45ntxD3KNBEUZ326I541_-SRJdTpBYZKPMyO6UJlR81zRzJaXKn3wp1sAi3V4PKVJRHWg9SwnMfo7WIF8nGCS_7fFHHfcEbvKWl5cgmShar8_7j8lbyEFGXRVoVnto1y3qk_Z61YdiUcJL0EOFHOIaCgYKAaUSARESFQHGX2MiT4TAZl9zUVBK_rN21d3CfQ0175"
+}
+
+###
+
 POST http://localhost:8000/auth/logout
 Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ODIzNDAzOTFjOGU0ZjAxOGFjOGIzYiIsImlhdCI6MTczNjU4NjQ1NX0.bUOOW8NovKZVS_UBzl0d_6lHqFzpzI7fw6SiqrAFxT8
 Content-Type: application/json
+
+###
+
+

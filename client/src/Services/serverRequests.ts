@@ -30,6 +30,19 @@ const uploadUserProfilePicture = async (file: File) => {
   }
 };
 
+const addGoogleUser = async (userToken: string) => {
+  try {
+    const { data } = await axios.post(
+      process.env.REACT_APP_SERVER_URL + "/auth/googleRegistration",
+      { userToken }
+    );
+
+    return data;
+  } catch (error) {
+    return error;
+  }
+};
+
 const verifyUser = () => {};
 
-export { saveNewUser, verifyUser, uploadUserProfilePicture };
+export { saveNewUser, verifyUser, uploadUserProfilePicture, addGoogleUser };

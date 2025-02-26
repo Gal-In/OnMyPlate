@@ -4,10 +4,11 @@ const { Schema } = mongoose;
 export interface User {
   _id: mongoose.Types.ObjectId;
   name: string;
-  username: string;
+  username?: string;
   email: string;
-  password: string;
+  password?: string;
   refreshTokens: string[];
+  isGoogleUser: boolean;
 }
 
 const userSchema = new Schema<User>({
@@ -17,19 +18,23 @@ const userSchema = new Schema<User>({
   },
   username: {
     type: String,
-    required: true,
     unique: true,
   },
   email: {
     type: String,
+    unique: true,
     required: true,
   },
   password: {
     type: String,
-    required: true,
   },
   refreshTokens: {
     type: [String],
+  },
+  isGoogleUser: {
+    type: Boolean,
+    default: false,
+    required: true,
   },
 });
 

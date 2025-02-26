@@ -3,6 +3,8 @@ import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import userModel, { User } from "../models/userModel";
 import { Types } from "mongoose";
+import axios from "axios";
+import { GoogleUserResponse } from "../types";
 
 const setUserRefreshTokens = async (
   userId: Types.ObjectId,
@@ -63,7 +65,10 @@ const login = async (req: Request, res: Response) => {
 
   const currUser = await userModel.findOne({ username });
   if (currUser) {
-    const isPasswordCorrect = await bcrypt.compare(password, currUser.password);
+    const isPasswordCorrect = await bcrypt.compare(
+      password,
+      currUser.password!
+    );
 
     if (isPasswordCorrect) {
       const tokens = generateTokens(currUser);
@@ -135,15 +140,16 @@ const registration = async (req: Request, res: Response) => {
     !password?.length ||
     !name?.length
   ) {
-    console.log("hello");
     res.status(400).send("user details are missing");
     return;
   }
 
   try {
-    const user = await userModel.findOne({ username });
+    const user = await userModel.findOne({ $or: [{ username }, { email }] });
+
     if (user) {
-      res.status(409).send("user already exist");
+      const field = user.username === username ? "username" : "email";
+      res.status(409).send(`user already exist - ${field}`);
       return;
     }
 
@@ -197,6 +203,64 @@ const refreshToken = async (req: Request, res: Response) => {
   } else res.status(401).send("unauthorized - token not found");
 };
 
+const verifyGoogleUser = async (
+  userToken: String
+): Promise<GoogleUserResponse> => {
+  const { data } = await axios.post<GoogleUserResponse>(
+    `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${userToken}`
+  );
+
+  return data;
+};
+
+const urlToFile = async (url: string, fileName: string) => {
+  const { data } = await axios.get(url, { responseType: "arraybuffer" });
+  const buffer = Buffer.from(data, "binary");
+
+  const file = new File([buffer], fileName + ".jpg", {
+    type: "image/jpeg",
+    lastModified: new Date().getTime(),
+  });
+
+  return file;
+};
+
+const googleRegistration = async (req: Request, res: Response) => {
+  const { userToken }: { userToken: string } = req.body;
+  console.log({ userToken });
+
+  if (userToken) {
+    const data = await verifyGoogleUser(userToken);
+
+    const { name, email, picture } = data;
+
+    const user = await userModel.findOne({ email });
+    if (user) {
+      res.status(409).send("user already exist");
+      return;
+    }
+
+    const newUser = await userModel.create({
+      name,
+      email,
+      isGoogleUser: true,
+    });
+
+    const file = await urlToFile(picture, email);
+    const formData = new FormData();
+    formData.append("file", file);
+
+    await axios.post(
+      `http:localhost:${process.env.PORT}/file/profilePicture`,
+      formData
+    );
+
+    res.status(201).send(newUser);
+  } else {
+    res.status(400).send("user google token not found");
+  }
+};
+
 export default {
   authenticate,
   login,
@@ -204,4 +268,5 @@ export default {
   registration,
   refreshToken,
   encryptPassword,
+  googleRegistration,
 };
