@@ -24,6 +24,9 @@ const router = express.Router();
  *         _id:
  *           type: string
  *           description: Db generated user id
+ *         name:
+ *           type: string
+ *           description: The user name
  *         username:
  *           type: string
  *           description: The user username
@@ -40,7 +43,8 @@ const router = express.Router();
  *           description: The user refresh tokens, created using the authentication requests
  *       example:
  *         _id: 67813c84b8f996b54a5e04ca
- *         username: koren
+ *         name: koren
+ *         username: koren23
  *         email: koren@gmail.com
  *         password: $2b$10$OgtMmMCzD3s29LUk6HeyP.Wksi0eAGRYKDvNgBklU476hPDqf45m.
  *         refreshTokens: []
