@@ -78,7 +78,13 @@ const login = async (req: Request, res: Response) => {
 
       await setUserRefreshTokens(currUser._id, newTokens);
 
-      res.status(200).send(tokens);
+      res.status(200).send({
+        ...tokens,
+        name: currUser.name,
+        username: currUser.username,
+        email: currUser.email,
+        isGoogleUser: currUser.isGoogleUser,
+      });
       return;
     }
   }
@@ -227,7 +233,6 @@ const urlToFile = async (url: string, fileName: string) => {
 
 const googleRegistration = async (req: Request, res: Response) => {
   const { userToken }: { userToken: string } = req.body;
-  console.log({ userToken });
 
   if (userToken) {
     const data = await verifyGoogleUser(userToken);
@@ -240,11 +245,13 @@ const googleRegistration = async (req: Request, res: Response) => {
       return;
     }
 
-    const newUser = await userModel.create({
+    const newUserInfo = {
       name,
       email,
       isGoogleUser: true,
-    });
+    };
+
+    const newUser = await userModel.create(newUserInfo);
 
     const file = await urlToFile(picture, email);
     const formData = new FormData();
@@ -255,7 +262,9 @@ const googleRegistration = async (req: Request, res: Response) => {
       formData
     );
 
-    res.status(201).send(newUser);
+    const tokens = generateTokens(newUser);
+
+    res.status(201).send({ ...newUserInfo, ...tokens });
   } else {
     res.status(400).send("user google token not found");
   }

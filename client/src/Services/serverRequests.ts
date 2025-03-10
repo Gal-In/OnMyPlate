@@ -1,15 +1,15 @@
 import axios from "axios";
-import User from "../Types/userTypes";
+import { DbUser, UserRequestResponse } from "../Types/userTypes";
 
-const saveNewUser = async (newUser: User) => {
+const saveNewUser = async (newUser: DbUser) => {
   try {
-    const { data } = await axios.post(
+    const { data } = await axios.post<UserRequestResponse>(
       process.env.REACT_APP_SERVER_URL + "/auth/registration",
       newUser
     );
 
     return data;
-  } catch (error) {
+  } catch (error: unknown) {
     return error;
   }
 };
@@ -43,6 +43,17 @@ const addGoogleUser = async (userToken: string) => {
   }
 };
 
-const verifyUser = () => {};
+const verifyUser = async (username: string, password: string) => {
+  try {
+    const { data } = await axios.post<UserRequestResponse>(
+      process.env.REACT_APP_SERVER_URL + "/auth/login",
+      { username, password }
+    );
+
+    return data;
+  } catch (error) {
+    return error;
+  }
+};
 
 export { saveNewUser, verifyUser, uploadUserProfilePicture, addGoogleUser };

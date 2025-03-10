@@ -9,6 +9,8 @@ import { prefixer } from "stylis";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { UserContextProvider } from "./Hooks/useUser";
+import { CookiesProvider } from "react-cookie";
 
 const GOOGLE_CLIENT_ID =
   "593169361117-6o3lgqtkfplns34gj0g2k3ququvv3527.apps.googleusercontent.com";
@@ -43,7 +45,11 @@ root.render(
     <CacheProvider value={cacheRtl}>
       <ThemeProvider theme={theme}>
         <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-          <App />
+          <UserContextProvider>
+            <CookiesProvider>
+              <App />
+            </CookiesProvider>
+          </UserContextProvider>
         </GoogleOAuthProvider>
       </ThemeProvider>
     </CacheProvider>
