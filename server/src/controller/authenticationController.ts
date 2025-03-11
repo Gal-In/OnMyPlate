@@ -84,6 +84,7 @@ const login = async (req: Request, res: Response) => {
         username: currUser.username,
         email: currUser.email,
         isGoogleUser: currUser.isGoogleUser,
+        profilePictureExtension: currUser.profilePictureExtension,
       });
       return;
     }
@@ -138,7 +139,7 @@ const logout = async (req: Request, res: Response) => {
 };
 
 const registration = async (req: Request, res: Response) => {
-  const { username, email, password, name } = req.body;
+  const { username, email, password, name, profilePictureExtension } = req.body;
 
   if (
     !username?.length ||
@@ -165,6 +166,7 @@ const registration = async (req: Request, res: Response) => {
       username,
       email,
       password: encryptedPassword,
+      profilePictureExtension,
     });
 
     res.status(201).send(newUser);
@@ -224,7 +226,7 @@ const urlToFile = async (url: string, fileName: string) => {
   const buffer = Buffer.from(data, "binary");
 
   const file = new File([buffer], fileName + ".jpg", {
-    type: "image/jpeg",
+    type: "jpg",
     lastModified: new Date().getTime(),
   });
 
@@ -245,15 +247,17 @@ const googleRegistration = async (req: Request, res: Response) => {
       return;
     }
 
+    const file = await urlToFile(picture, email);
+
     const newUserInfo = {
       name,
       email,
       isGoogleUser: true,
+      profilePictureExtension: file.type,
     };
 
     const newUser = await userModel.create(newUserInfo);
 
-    const file = await urlToFile(picture, email);
     const formData = new FormData();
     formData.append("file", file);
 

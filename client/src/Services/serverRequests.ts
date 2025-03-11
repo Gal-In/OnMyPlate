@@ -32,7 +32,7 @@ const uploadUserProfilePicture = async (file: File) => {
 
 const addGoogleUser = async (userToken: string) => {
   try {
-    const { data } = await axios.post(
+    const { data } = await axios.post<UserRequestResponse>(
       process.env.REACT_APP_SERVER_URL + "/auth/googleRegistration",
       { userToken }
     );

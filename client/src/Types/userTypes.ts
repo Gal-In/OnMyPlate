@@ -3,6 +3,7 @@ export type DbUser = {
   username: string;
   password: string;
   email: string;
+  profilePictureExtension?: string;
 };
 
 export type User = {
@@ -10,6 +11,7 @@ export type User = {
   username: string;
   email: string;
   isGoogleUser: boolean;
+  profilePictureExtension?: string;
 };
 
 export type UserRequestResponse = {
@@ -19,4 +21,5 @@ export type UserRequestResponse = {
   password: string;
   refreshToken: string;
   username: string;
+  profilePictureExtension?: string;
 };

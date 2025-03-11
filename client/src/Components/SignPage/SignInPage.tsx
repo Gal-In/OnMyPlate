@@ -50,6 +50,7 @@ const SignInPgae = ({
         email: userInfo.email,
         isGoogleUser: userInfo.isGoogleUser,
         name: userInfo.name,
+        profilePictureExtension: userInfo.profilePictureExtension,
       });
     }
   };

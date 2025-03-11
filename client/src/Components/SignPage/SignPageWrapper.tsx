@@ -40,7 +40,7 @@ const SignPageWrapper = ({
       dir="rtl"
       sx={{
         height: "100%",
-        padding: 5,
+        padding: 4,
       }}
     >
       <Card variant="outlined">

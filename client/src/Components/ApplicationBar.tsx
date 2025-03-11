@@ -10,6 +10,7 @@ import {
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useUser } from "../Hooks/useUser";
 import { useCookies } from "react-cookie";
+import { useMemo } from "react";
 
 const ApplicationBar = () => {
   const [_, _1, removeCookie] = useCookies(["refreshToken"]);
@@ -20,6 +21,14 @@ const ApplicationBar = () => {
     removeCookie("refreshToken");
     setUser(null);
   };
+
+  const imageUrl = useMemo(
+    () =>
+      user?.profilePictureExtension
+        ? `${process.env.REACT_APP_SERVER_URL}/media/profile/${user.email}.${user.profilePictureExtension}`
+        : "/projectLogo.svg",
+    [user]
+  );
 
   return (
     <AppBar position="static" dir="rtl">
@@ -32,7 +41,7 @@ const ApplicationBar = () => {
         <Tooltip title={"ערוך פרופיל"}>
           <IconButton sx={{ p: 1 }}>
             <Avatar
-              src={`${process.env.REACT_APP_SERVER_URL}/media/profile/${user?.email}.svg`}
+              src={imageUrl}
               sx={{
                 "& img": { objectFit: "contain" },
               }}

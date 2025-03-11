@@ -37,12 +37,41 @@ const SignUpPage = () => {
   const { setUser } = useUser();
 
   const googleLogin = useGoogleLogin({
-    onSuccess: (credentials) => addGoogleUser(credentials.access_token),
+    onSuccess: (credentials) => handleGoogleLogin(credentials.access_token),
   });
 
+  const handleGoogleLogin = async (googleAcessToken: string) => {
+    const response = await addGoogleUser(googleAcessToken);
+
+    if (axios.isAxiosError(response)) {
+      setRequestErrorMessage(`שים לב, חשבון גוגל זה כבר קיים`);
+    } else {
+      const userInfo = response as UserRequestResponse;
+      setUser({
+        username: userInfo.username,
+        email: userInfo.email,
+        name: userInfo.name,
+        isGoogleUser: userInfo.isGoogleUser,
+        profilePictureExtension: userInfo.profilePictureExtension,
+      });
+    }
+  };
+
   const handleSubmit = async () => {
+    let imageFile = null;
+
     if (!validateInputs()) {
-      const response = await saveNewUser({ username, email, password, name });
+      if (imageUrl) imageFile = await dataUrlToFile(imageUrl, email);
+
+      const profilePictureExtension = imageFile?.type;
+
+      const response = await saveNewUser({
+        username,
+        email,
+        password,
+        name,
+        profilePictureExtension,
+      });
       if (axios.isAxiosError(response)) {
         if (response.status === 409) {
           const field = response.response?.data.includes("email")
@@ -51,20 +80,19 @@ const SignUpPage = () => {
           setRequestErrorMessage(`שים לב, ${field} כבר קיים`);
         } else setRequestErrorMessage("קיימת תקלה בשרת, המשתמש לא נשמר");
       } else {
-        if (imageUrl) {
-          const file = await dataUrlToFile(imageUrl, email);
-
+        if (imageFile) {
           try {
-            await uploadUserProfilePicture(file);
+            await uploadUserProfilePicture(imageFile);
             setUser({
               username,
               email,
               name,
               isGoogleUser: (response as UserRequestResponse).isGoogleUser,
+              profilePictureExtension: (response as UserRequestResponse)
+                .profilePictureExtension,
             });
           } catch (e) {
             setRequestErrorMessage("קיימת תקלה בשרת, תמונת הפרופיל לא נשמרה");
-            return;
           }
         } else {
           setUser({
@@ -185,7 +213,7 @@ const SignUpPage = () => {
       >
         <FormControl
           sx={{
-            gap: 2,
+            gap: 1.5,
           }}
         >
           <TextField
