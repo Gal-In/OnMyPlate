@@ -3,10 +3,12 @@ import postModel from "../models/postModel";
 
 const addNewPost = async (req: Request, res: Response) => {
   try {
-    const { content, title } = req.body;
+    const { description, restaurantName, rating, googleApiRating } = req.body;
     const newPost = await postModel.create({
-      content,
-      title,
+      description,
+      restaurantName,
+      rating,
+      googleApiRating,
       senderId: req.params.userId,
     });
     res.status(201).send(newPost);
