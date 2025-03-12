@@ -136,7 +136,6 @@ const SignInPgae = ({
               name="password"
               type="password"
               id="password"
-              autoFocus
               fullWidth
               variant="outlined"
               color={fieldsError.password ? "error" : "primary"}

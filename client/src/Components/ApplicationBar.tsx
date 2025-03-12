@@ -6,14 +6,20 @@ import {
   TextField,
   Tooltip,
   Avatar,
+  Button,
 } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useUser } from "../Context/useUser";
 import { useCookies } from "react-cookie";
 import { useMemo } from "react";
 import { logoutUser } from "../Services/serverRequests";
+import { Add } from "@mui/icons-material";
 
-const ApplicationBar = () => {
+type ApplicationBarProps = {
+  setIsAddingPost: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const ApplicationBar = ({ setIsAddingPost }: ApplicationBarProps) => {
   const [{ refreshToken }, _, removeCookie] = useCookies(["refreshToken"]);
   const { user, setUser, setAccessToken } = useUser();
 
@@ -51,6 +57,13 @@ const ApplicationBar = () => {
             />
           </IconButton>
         </Tooltip>
+        <Button
+          variant="contained"
+          startIcon={<Add />}
+          onClick={() => setIsAddingPost(true)}
+        >
+          הוסף פוסט
+        </Button>
         <Typography
           variant="h6"
           noWrap
@@ -70,15 +83,6 @@ const ApplicationBar = () => {
           }}
           placeholder="חיפוש"
         />
-        {/* <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Search…"
-                inputProps={{ "aria-label": "search" }}
-              />
-            </Search> */}
       </Toolbar>
     </AppBar>
   );

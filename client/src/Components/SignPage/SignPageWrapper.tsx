@@ -39,7 +39,6 @@ const SignPageWrapper = ({
       justifyContent="space-between"
       dir="rtl"
       sx={{
-        height: "100%",
         padding: 4,
       }}
     >
