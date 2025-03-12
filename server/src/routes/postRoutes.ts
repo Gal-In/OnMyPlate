@@ -80,6 +80,10 @@ const router = express.Router();
  *                              type: number
  *                              description: restaurant rating by google api
  *                              example: 4.2
+ *                          photosUrl:
+ *                              type: array
+ *                              description: restaurant photos urls
+ *                              example: []
  *                      required:
  *                        - restaurantName
  *                        - rating
