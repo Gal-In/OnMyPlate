@@ -1,6 +1,13 @@
 import axios from "axios";
 import { DbUser, UserRequestResponse } from "../Types/userTypes";
 
+export type GoogleMapApiRes = {
+  formatted_address: string;
+  name: string;
+  place_id: string;
+  rating: number;
+};
+
 const saveNewUser = async (newUser: DbUser) => {
   try {
     const { data } = await axios.post<UserRequestResponse>(
@@ -108,6 +115,29 @@ const uploadPostPictures = async (postId: string, files: File[]) => {
   }
 };
 
+const findRestaurantByName = async ({
+  inputType = "textquery",
+  language = "iw",
+  fields = "formatted_address%2Cname%2Crating%2Cplace_id",
+  input = "",
+}: {
+  inputType?: string;
+  language?: string;
+  fields?: string;
+  input: string;
+}) => {
+  try {
+    const response = await axios.post<GoogleMapApiRes[]>(
+      process.env.REACT_APP_SERVER_URL + `/googleApi`,
+      { input, inputType, fields, language }
+    );
+
+    return response.data;
+  } catch (e) {
+    return e;
+  }
+};
+
 export {
   saveNewUser,
   verifyUser,
@@ -116,4 +146,5 @@ export {
   refreshAccessToken,
   logoutUser,
   uploadPostPictures,
+  findRestaurantByName,
 };

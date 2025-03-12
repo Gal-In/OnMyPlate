@@ -13,9 +13,6 @@ import { UserContextProvider } from "./Context/useUser";
 import { CookiesProvider } from "react-cookie";
 import { AuthApiContextProvider } from "./Context/useAuthApi";
 
-const GOOGLE_CLIENT_ID =
-  "593169361117-6o3lgqtkfplns34gj0g2k3ququvv3527.apps.googleusercontent.com";
-
 const theme = createTheme({
   direction: "rtl",
   typography: {
@@ -44,7 +41,9 @@ const root = ReactDOM.createRoot(
 root.render(
   <CacheProvider value={cacheRtl}>
     <ThemeProvider theme={theme}>
-      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <GoogleOAuthProvider
+        clientId={process.env.REACT_APP_GOOGLE_OAUTH_CLIENT_ID as string}
+      >
         <UserContextProvider>
           <AuthApiContextProvider>
             <CookiesProvider>

@@ -12,10 +12,15 @@ import { useMemo, useState } from "react";
 import { Close } from "@mui/icons-material";
 import ImagesList from "./ImagesList";
 import { useAuthenticatedServerRequest } from "../Services/authenticatedServerRequest";
-import { uploadPostPictures } from "../Services/serverRequests";
+import {
+  findRestaurantByName,
+  GoogleMapApiRes,
+  uploadPostPictures,
+} from "../Services/serverRequests";
 import dataUrlToFile from "../Services/fileConvertorService";
 import { Post } from "../Types/postTypes";
 import axios from "axios";
+import RestaurantSelectionDialog from "./SignPage/RestaurantSelectionDialog";
 
 type AddPostPageProps = {
   setIsAddingPost: React.Dispatch<React.SetStateAction<boolean>>;
@@ -29,17 +34,41 @@ const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
   const [description, setDescription] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [imagesUrl, setImagesUrl] = useState<any[]>([]);
+  const [restaurantOptions, setRestaurantOptions] = useState<GoogleMapApiRes[]>(
+    []
+  );
+  // const [selectedRestaurant, setSelectedRestaurant] = useState<GoogleMapApiRes | null>(null)
 
   const { addNewPost, updatePost } = useAuthenticatedServerRequest();
 
   const handleAddPost = async () => {
     setIsLoading(true);
+
+    const response = await findRestaurantByName({
+      input: restaurantName,
+    });
+
+    if (axios.isAxiosError(response)) setErrorMessage("חלה תקלה, נא נסה שנית");
+    else {
+      const restaurants = response as GoogleMapApiRes[];
+      if (restaurants.length === 1) await savePost(restaurants[0]);
+      else {
+        if (restaurants.length > 5 || restaurants.length === 0)
+          setErrorMessage("שם המסעדה לא נמצא, אנא נסה שנית");
+        else setRestaurantOptions(restaurants);
+      }
+    }
+
+    setIsLoading(false);
+  };
+
+  const savePost = async (selectedRestaurant: GoogleMapApiRes) => {
     if (isNewPost) {
       const response = await addNewPost({
         description,
         restaurantName,
         rating,
-        googleApiRating: 4,
+        googleApiRating: selectedRestaurant.rating,
         photosUrl: [],
       });
 
@@ -62,8 +91,6 @@ const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
       await updatePost(postId, { photosUrl });
     } else {
     }
-
-    setIsLoading(false);
   };
 
   const isAbleToSave = useMemo(
@@ -174,6 +201,15 @@ const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
               zIndex: 1000,
             }}
             size={100}
+          />
+        )}
+        {!!restaurantOptions.length && (
+          <RestaurantSelectionDialog
+            handleSelect={(restaurant) => {
+              setRestaurantOptions([]);
+              savePost(restaurant);
+            }}
+            options={restaurantOptions}
           />
         )}
       </SignPageWrapper>

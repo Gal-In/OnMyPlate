@@ -39,6 +39,7 @@ const SignInPgae = ({
 
       if (axios.isAxiosError(response)) {
         setRequestErrorMessage("המשתמש לא נמצא");
+        return;
       }
 
       const userInfo = response as UserRequestResponse;
