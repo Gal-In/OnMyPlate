@@ -1,5 +1,5 @@
 import { Box, Button, FormControl, IconButton, TextField } from "@mui/material";
-import SignPageWrapper from "./SignPage/SignPageWrapper";
+import SignPageWrapper from "./CardWrapper";
 import { useMemo, useState } from "react";
 import { Close } from "@mui/icons-material";
 import ImagesList from "./ImagesList";
@@ -11,7 +11,7 @@ type AddPostPageProps = {
 const AddPostPage = ({ setIsAddingPost }: AddPostPageProps) => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [requestErrorMessage, setRequestErrorMessage] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const [imagesUrl, setImagesUrl] = useState<any[]>([]);
 
   const handleAddPost = () => {};
@@ -24,8 +24,8 @@ const AddPostPage = ({ setIsAddingPost }: AddPostPageProps) => {
     <>
       <SignPageWrapper
         title={"הוסף פוסט"}
-        requestErrorMessage={requestErrorMessage}
-        setRequestErrorMessage={setRequestErrorMessage}
+        errorMessage={errorMessage}
+        setErrorMessage={setErrorMessage}
       >
         <IconButton
           sx={{
@@ -47,7 +47,7 @@ const AddPostPage = ({ setIsAddingPost }: AddPostPageProps) => {
             isAbleToAdd={true}
             imagesUrl={imagesUrl}
             setImagesUrl={setImagesUrl}
-            setErrorMessage={setRequestErrorMessage}
+            setErrorMessage={setErrorMessage}
           />
           <Box
             component="form"

@@ -20,19 +20,19 @@ const Card = styled(MuiCard)(({ theme }) => ({
     "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
 }));
 
-type SignPageProps = {
+type CardWrapperProps = {
   title: string;
-  requestErrorMessage: string;
-  setRequestErrorMessage: React.Dispatch<React.SetStateAction<string>>;
+  errorMessage: string;
+  setErrorMessage: React.Dispatch<React.SetStateAction<string>>;
   children?: React.ReactNode;
 };
 
-const SignPageWrapper = ({
+const CardWrapper = ({
   title,
-  requestErrorMessage,
-  setRequestErrorMessage,
+  errorMessage,
+  setErrorMessage,
   children,
-}: SignPageProps) => {
+}: CardWrapperProps) => {
   return (
     <Stack
       direction="column"
@@ -50,22 +50,22 @@ const SignPageWrapper = ({
       </Card>
 
       <Snackbar
-        open={!!requestErrorMessage.length}
+        open={!!errorMessage.length}
         autoHideDuration={3000}
-        onClose={() => setRequestErrorMessage("")}
-        message={requestErrorMessage}
+        onClose={() => setErrorMessage("")}
+        message={errorMessage}
       >
         <Alert
-          onClose={() => setRequestErrorMessage("")}
+          onClose={() => setErrorMessage("")}
           severity="warning"
           variant="filled"
           sx={{ width: "100%" }}
         >
-          {requestErrorMessage}
+          {errorMessage}
         </Alert>
       </Snackbar>
     </Stack>
   );
 };
 
-export default SignPageWrapper;
+export default CardWrapper;

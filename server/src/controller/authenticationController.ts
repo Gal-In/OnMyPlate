@@ -174,7 +174,9 @@ const registration = async (req: Request, res: Response) => {
       profilePictureExtension,
     });
 
-    res.status(201).send(relevantUserInfo(newUser));
+    const tokens = await generateTokens(newUser);
+
+    res.status(201).send({ ...relevantUserInfo(newUser), ...tokens });
   } catch (error) {
     res.status(400).send(error);
   }

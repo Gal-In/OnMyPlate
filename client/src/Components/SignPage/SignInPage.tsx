@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import SignPageWrapper from "./SignPageWrapper";
+import SignPageWrapper from "../CardWrapper";
 import {
   Avatar,
   FormControl,
@@ -71,8 +71,8 @@ const SignInPgae = ({
     <>
       <SignPageWrapper
         title="מסך כניסה"
-        requestErrorMessage={requestErrorMessage}
-        setRequestErrorMessage={setRequestErrorMessage}
+        errorMessage={requestErrorMessage}
+        setErrorMessage={setRequestErrorMessage}
       >
         <div
           style={{

@@ -20,7 +20,7 @@ import axios from "axios";
 import dataUrlToFile from "../../Services/fileConvertorService";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useUser } from "../../Context/useUser";
-import SignPageWrapper from "./SignPageWrapper";
+import SignPageWrapper from "../CardWrapper";
 import SignInPgae from "./SignInPage";
 import { UserRequestResponse } from "../../Types/userTypes";
 
@@ -142,8 +142,8 @@ const SignUpPage = () => {
   return isSignUp ? (
     <SignPageWrapper
       title={"מסך הרשמה"}
-      requestErrorMessage={requestErrorMessage}
-      setRequestErrorMessage={setRequestErrorMessage}
+      errorMessage={requestErrorMessage}
+      setErrorMessage={setRequestErrorMessage}
     >
       <div
         style={{
