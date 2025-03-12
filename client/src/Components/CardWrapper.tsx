@@ -39,8 +39,9 @@ const CardWrapper = ({
       justifyContent="space-between"
       dir="rtl"
       sx={{
-        padding: 4,
+        padding: 1,
       }}
+      position="relative"
     >
       <Card variant="outlined">
         <Typography component="h1" variant="h4" sx={{ width: "100%" }}>

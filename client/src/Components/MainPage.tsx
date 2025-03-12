@@ -8,7 +8,7 @@ const MainPage = () => {
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       {isAddingPost ? (
-        <AddPostPage setIsAddingPost={setIsAddingPost} />
+        <AddPostPage setIsAddingPost={setIsAddingPost} isNewPost={true} />
       ) : (
         <ApplicationBar setIsAddingPost={setIsAddingPost} />
       )}

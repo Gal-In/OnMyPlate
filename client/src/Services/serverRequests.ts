@@ -92,6 +92,22 @@ const logoutUser = async (refreshToken: string) => {
   }
 };
 
+const uploadPostPictures = async (postId: string, files: File[]) => {
+  try {
+    const formData = new FormData();
+
+    files.forEach((file) => formData.append("files", file));
+    const { data } = await axios.post(
+      process.env.REACT_APP_SERVER_URL + `/file/postPictures/${postId}`,
+      formData
+    );
+
+    return data;
+  } catch (error) {
+    return error;
+  }
+};
+
 export {
   saveNewUser,
   verifyUser,
@@ -99,4 +115,5 @@ export {
   addGoogleUser,
   refreshAccessToken,
   logoutUser,
+  uploadPostPictures,
 };

@@ -1,12 +1,23 @@
 import multer from "multer";
 
-const storage = multer.diskStorage({
+const profilePictureStorage = multer.diskStorage({
   destination: "media/profile/",
   filename: function (req, file, cb) {
     cb(null, file.originalname);
   },
 });
 
-const uploadFile = multer({ storage: storage }).single("file");
+const postPictureStorage = multer.diskStorage({
+  destination: "media/posts/",
+  filename: function (req, file, cb) {
+    cb(null, req.params.postId + "_" + file.originalname);
+  },
+});
 
-export { uploadFile };
+const uploadFile = multer({ storage: profilePictureStorage }).single("file");
+
+const uploadMultipleFiles = multer({ storage: postPictureStorage }).array(
+  "files"
+);
+
+export { uploadFile, uploadMultipleFiles };

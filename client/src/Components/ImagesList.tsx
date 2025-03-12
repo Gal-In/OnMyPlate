@@ -1,4 +1,9 @@
-import { AddAPhoto, ChevronLeft, ChevronRight } from "@mui/icons-material";
+import {
+  AddAPhoto,
+  ChevronLeft,
+  ChevronRight,
+  Delete,
+} from "@mui/icons-material";
 import { Box, Button, IconButton, Typography } from "@mui/material";
 import { useState } from "react";
 
@@ -7,6 +12,7 @@ type ImagesListProps = {
   imagesUrl: any[];
   setImagesUrl: React.Dispatch<React.SetStateAction<any[]>>;
   setErrorMessage: React.Dispatch<React.SetStateAction<string>>;
+  maxImagesToAdd?: number;
 };
 
 const ImagesList = ({
@@ -14,6 +20,7 @@ const ImagesList = ({
   imagesUrl,
   setImagesUrl,
   setErrorMessage,
+  maxImagesToAdd = 5,
 }: ImagesListProps) => {
   const [currImageIndex, setCurrImageIndex] = useState<number>(0);
 
@@ -74,6 +81,24 @@ const ImagesList = ({
                 padding: "10px",
               }}
             >
+              {!!imagesUrl.length && (
+                <IconButton
+                  sx={{
+                    position: "absolute",
+                  }}
+                  onClick={() => {
+                    const originalIndex = currImageIndex;
+                    if (originalIndex >= imagesUrl.length - 1)
+                      setCurrImageIndex((prev) => prev - 1);
+                    if (imagesUrl.length - 1 === 0) setCurrImageIndex(0);
+                    setImagesUrl((prev) =>
+                      prev.filter((_, index) => index !== originalIndex)
+                    );
+                  }}
+                >
+                  <Delete />
+                </IconButton>
+              )}
               <img
                 src={
                   imagesUrl.length ? imagesUrl[currImageIndex] : "/noImage.png"
@@ -106,6 +131,7 @@ const ImagesList = ({
             component="label"
             variant="outlined"
             startIcon={<AddAPhoto />}
+            disabled={imagesUrl.length === maxImagesToAdd}
           >
             הוסף תמונה
             <input

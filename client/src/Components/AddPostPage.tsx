@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   FormControl,
   IconButton,
   Rating,
@@ -10,23 +11,68 @@ import SignPageWrapper from "./CardWrapper";
 import { useMemo, useState } from "react";
 import { Close } from "@mui/icons-material";
 import ImagesList from "./ImagesList";
+import { useAuthenticatedServerRequest } from "../Services/authenticatedServerRequest";
+import { uploadPostPictures } from "../Services/serverRequests";
+import dataUrlToFile from "../Services/fileConvertorService";
+import { Post } from "../Types/postTypes";
+import axios from "axios";
 
 type AddPostPageProps = {
   setIsAddingPost: React.Dispatch<React.SetStateAction<boolean>>;
+  isNewPost: boolean;
 };
 
-const AddPostPage = ({ setIsAddingPost }: AddPostPageProps) => {
+const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
   const [restaurantName, setRestaurantName] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [rating, setRating] = useState<number>(0);
   const [description, setDescription] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [imagesUrl, setImagesUrl] = useState<any[]>([]);
 
-  const handleAddPost = () => {};
+  const { addNewPost, updatePost } = useAuthenticatedServerRequest();
 
-  const isAbleToSave = useMemo(() => {
-    return restaurantName.trim().length && description.trim().length;
-  }, [restaurantName, description]);
+  const handleAddPost = async () => {
+    setIsLoading(true);
+    if (isNewPost) {
+      const response = await addNewPost({
+        description,
+        restaurantName,
+        rating,
+        googleApiRating: 4,
+        photosUrl: [],
+      });
+
+      if (axios.isAxiosError(response)) {
+        setErrorMessage("חלה תקלה בשמירת הפוסט");
+        return;
+      }
+
+      const postId = (response as Post)._id;
+      const files = await Promise.all(
+        imagesUrl.map((imageUrl, index) =>
+          dataUrlToFile(imageUrl, index.toString())
+        )
+      );
+
+      const photosUrl = files.map((file) => postId + "_" + file.name);
+
+      await uploadPostPictures(postId, files);
+
+      await updatePost(postId, { photosUrl });
+    } else {
+    }
+
+    setIsLoading(false);
+  };
+
+  const isAbleToSave = useMemo(
+    () =>
+      restaurantName.trim().length &&
+      description.trim().length &&
+      !!imagesUrl.length,
+    [restaurantName, description, imagesUrl]
+  );
 
   return (
     <>
@@ -52,7 +98,7 @@ const AddPostPage = ({ setIsAddingPost }: AddPostPageProps) => {
           }}
         >
           <ImagesList
-            isAbleToAdd={true}
+            isAbleToAdd={!isLoading}
             imagesUrl={imagesUrl}
             setImagesUrl={setImagesUrl}
             setErrorMessage={setErrorMessage}
@@ -79,6 +125,7 @@ const AddPostPage = ({ setIsAddingPost }: AddPostPageProps) => {
                 onChange={(_, newRating) => {
                   setRating(newRating ?? 0);
                 }}
+                disabled={isLoading}
               />
               <TextField
                 id="name"
@@ -89,6 +136,7 @@ const AddPostPage = ({ setIsAddingPost }: AddPostPageProps) => {
                 value={restaurantName}
                 onChange={(e) => setRestaurantName(e.target.value)}
                 slotProps={{ htmlInput: { maxLength: 20 } }}
+                disabled={isLoading}
               />
               <TextField
                 id="name"
@@ -101,11 +149,12 @@ const AddPostPage = ({ setIsAddingPost }: AddPostPageProps) => {
                 minRows={2}
                 maxRows={5}
                 slotProps={{ htmlInput: { maxLength: 400 } }}
+                disabled={isLoading}
               />
             </FormControl>
             <Button
               variant="outlined"
-              disabled={!isAbleToSave}
+              disabled={!isAbleToSave || isLoading}
               onClick={handleAddPost}
               sx={{
                 width: "fitContent",
@@ -116,6 +165,17 @@ const AddPostPage = ({ setIsAddingPost }: AddPostPageProps) => {
             </Button>
           </Box>
         </div>
+        {isLoading && (
+          <CircularProgress
+            sx={{
+              position: "absolute",
+              alignSelf: "center",
+              top: "40%",
+              zIndex: 1000,
+            }}
+            size={100}
+          />
+        )}
       </SignPageWrapper>
     </>
   );

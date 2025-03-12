@@ -276,7 +276,7 @@ const SignUpPage = () => {
         </Button>
       </Box>
       <Divider>אופציות נוספות</Divider>
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
         <Button
           fullWidth
           variant="outlined"
