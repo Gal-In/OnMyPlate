@@ -1,4 +1,11 @@
-import { Box, Button, FormControl, IconButton, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormControl,
+  IconButton,
+  Rating,
+  TextField,
+} from "@mui/material";
 import SignPageWrapper from "./CardWrapper";
 import { useMemo, useState } from "react";
 import { Close } from "@mui/icons-material";
@@ -9,7 +16,8 @@ type AddPostPageProps = {
 };
 
 const AddPostPage = ({ setIsAddingPost }: AddPostPageProps) => {
-  const [title, setTitle] = useState<string>("");
+  const [restaurantName, setRestaurantName] = useState<string>("");
+  const [rating, setRating] = useState<number>(0);
   const [description, setDescription] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [imagesUrl, setImagesUrl] = useState<any[]>([]);
@@ -17,8 +25,8 @@ const AddPostPage = ({ setIsAddingPost }: AddPostPageProps) => {
   const handleAddPost = () => {};
 
   const isAbleToSave = useMemo(() => {
-    return title.trim().length && description.trim().length;
-  }, [title, description]);
+    return restaurantName.trim().length && description.trim().length;
+  }, [restaurantName, description]);
 
   return (
     <>
@@ -65,14 +73,21 @@ const AddPostPage = ({ setIsAddingPost }: AddPostPageProps) => {
                 gap: 1.5,
               }}
             >
+              <Rating
+                value={rating}
+                precision={0.5}
+                onChange={(_, newRating) => {
+                  setRating(newRating ?? 0);
+                }}
+              />
               <TextField
                 id="name"
                 autoFocus
                 fullWidth
                 variant="outlined"
-                label="כותרת"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                label="שם מסעדה"
+                value={restaurantName}
+                onChange={(e) => setRestaurantName(e.target.value)}
                 slotProps={{ htmlInput: { maxLength: 20 } }}
               />
               <TextField
