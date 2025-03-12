@@ -6,20 +6,11 @@ export type DbUser = {
   profilePictureExtension?: string;
 };
 
-export type User = {
-  name: string;
-  username: string;
-  email: string;
+export type User = Omit<DbUser, "password"> & {
   isGoogleUser: boolean;
-  profilePictureExtension?: string;
 };
 
-export type UserRequestResponse = {
-  email: string;
-  isGoogleUser: boolean;
-  name: string;
-  password: string;
+export type UserRequestResponse = User & {
   refreshToken: string;
-  username: string;
-  profilePictureExtension?: string;
+  accessToken: string;
 };

@@ -19,7 +19,7 @@ import {
 import axios from "axios";
 import dataUrlToFile from "../../Services/fileConvertorService";
 import { useGoogleLogin } from "@react-oauth/google";
-import { useUser } from "../../Hooks/useUser";
+import { useUser } from "../../Context/useUser";
 import SignPageWrapper from "./SignPageWrapper";
 import SignInPgae from "./SignInPage";
 import { UserRequestResponse } from "../../Types/userTypes";
@@ -34,7 +34,7 @@ const SignUpPage = () => {
   const [imageUrl, setImageUrl] = useState<null | string>(null);
   const [requestErrorMessage, setRequestErrorMessage] = useState<string>("");
 
-  const { setUser } = useUser();
+  const { setUser, setAccessToken } = useUser();
 
   const googleLogin = useGoogleLogin({
     onSuccess: (credentials) => handleGoogleLogin(credentials.access_token),
@@ -54,6 +54,7 @@ const SignUpPage = () => {
         isGoogleUser: userInfo.isGoogleUser,
         profilePictureExtension: userInfo.profilePictureExtension,
       });
+      setAccessToken(userInfo.accessToken);
     }
   };
 
@@ -83,25 +84,23 @@ const SignUpPage = () => {
         if (imageFile) {
           try {
             await uploadUserProfilePicture(imageFile);
-            setUser({
-              username,
-              email,
-              name,
-              isGoogleUser: (response as UserRequestResponse).isGoogleUser,
-              profilePictureExtension: (response as UserRequestResponse)
-                .profilePictureExtension,
-            });
           } catch (e) {
             setRequestErrorMessage("קיימת תקלה בשרת, תמונת הפרופיל לא נשמרה");
+            return;
           }
-        } else {
-          setUser({
-            username,
-            email,
-            name,
-            isGoogleUser: (response as UserRequestResponse).isGoogleUser,
-          });
         }
+
+        const userInfo = response as UserRequestResponse;
+
+        setUser({
+          username,
+          email,
+          name,
+          isGoogleUser: userInfo.isGoogleUser,
+          profilePictureExtension: userInfo.profilePictureExtension,
+        });
+
+        setAccessToken(userInfo.accessToken);
       }
     }
   };

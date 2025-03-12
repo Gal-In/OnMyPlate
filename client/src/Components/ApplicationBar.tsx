@@ -8,17 +8,20 @@ import {
   Avatar,
 } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { useUser } from "../Hooks/useUser";
+import { useUser } from "../Context/useUser";
 import { useCookies } from "react-cookie";
 import { useMemo } from "react";
+import { logoutUser } from "../Services/serverRequests";
 
 const ApplicationBar = () => {
-  const [_, _1, removeCookie] = useCookies(["refreshToken"]);
-  const { user, setUser } = useUser();
+  const [{ refreshToken }, _, removeCookie] = useCookies(["refreshToken"]);
+  const { user, setUser, setAccessToken } = useUser();
 
   const logout = () => {
-    // delete access token too
+    logoutUser(refreshToken);
+
     removeCookie("refreshToken");
+    setAccessToken(null);
     setUser(null);
   };
 

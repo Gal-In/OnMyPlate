@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import { useUser } from "../../Hooks/useUser";
+import { useUser } from "../../Context/useUser";
 import { verifyUser } from "../../Services/serverRequests";
 import axios from "axios";
 import { useCookies } from "react-cookie";
@@ -31,8 +31,7 @@ const SignInPgae = ({
   const [fieldsError, setFieldsError] = useState<Record<string, string>>({});
 
   const [_, setCookie] = useCookies(["refreshToken"]);
-
-  const { setUser } = useUser();
+  const { setUser, setAccessToken } = useUser();
 
   const handleSubmit = async () => {
     if (!validateInputs()) {
@@ -52,6 +51,7 @@ const SignInPgae = ({
         name: userInfo.name,
         profilePictureExtension: userInfo.profilePictureExtension,
       });
+      setAccessToken(userInfo.accessToken);
     }
   };
 

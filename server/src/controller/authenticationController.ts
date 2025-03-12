@@ -5,6 +5,7 @@ import userModel, { User } from "../models/userModel";
 import { Types } from "mongoose";
 import axios from "axios";
 import { GoogleUserResponse } from "../types";
+import { Document } from "mongoose";
 
 const setUserRefreshTokens = async (
   userId: Types.ObjectId,
@@ -12,6 +13,14 @@ const setUserRefreshTokens = async (
 ) => {
   await userModel.findOneAndUpdate({ _id: userId }, { refreshTokens });
 };
+
+const relevantUserInfo = (user: Document & User) => ({
+  name: user.name,
+  username: user.username,
+  email: user.email,
+  isGoogleUser: user.isGoogleUser,
+  profilePictureExtension: user.profilePictureExtension,
+});
 
 const encryptPassword = async (password: string) => {
   const salt = await bcrypt.genSalt();
@@ -80,11 +89,7 @@ const login = async (req: Request, res: Response) => {
 
       res.status(200).send({
         ...tokens,
-        name: currUser.name,
-        username: currUser.username,
-        email: currUser.email,
-        isGoogleUser: currUser.isGoogleUser,
-        profilePictureExtension: currUser.profilePictureExtension,
+        ...relevantUserInfo(currUser),
       });
       return;
     }
@@ -169,7 +174,7 @@ const registration = async (req: Request, res: Response) => {
       profilePictureExtension,
     });
 
-    res.status(201).send(newUser);
+    res.status(201).send(relevantUserInfo(newUser));
   } catch (error) {
     res.status(400).send(error);
   }
@@ -204,7 +209,9 @@ const refreshToken = async (req: Request, res: Response) => {
           newRefreshTokens[newRefreshTokens.indexOf(token)] = refreshToken;
           await setUserRefreshTokens(user._id, newRefreshTokens);
 
-          res.status(200).send({ accessToken, refreshToken });
+          res
+            .status(200)
+            .send({ accessToken, refreshToken, ...relevantUserInfo(user) });
         }
       }
     );

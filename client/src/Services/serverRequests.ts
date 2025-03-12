@@ -56,4 +56,47 @@ const verifyUser = async (username: string, password: string) => {
   }
 };
 
-export { saveNewUser, verifyUser, uploadUserProfilePicture, addGoogleUser };
+const refreshAccessToken = async (refreshToken: string) => {
+  try {
+    const { data } = await axios.post<UserRequestResponse>(
+      process.env.REACT_APP_SERVER_URL + "/auth/refreshToken",
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${refreshToken}`,
+        },
+      }
+    );
+
+    return data;
+  } catch (error) {
+    return error;
+  }
+};
+
+const logoutUser = async (refreshToken: string) => {
+  try {
+    const { data } = await axios.post<UserRequestResponse>(
+      process.env.REACT_APP_SERVER_URL + "/auth/logout",
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${refreshToken}`,
+        },
+      }
+    );
+
+    return data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export {
+  saveNewUser,
+  verifyUser,
+  uploadUserProfilePicture,
+  addGoogleUser,
+  refreshAccessToken,
+  logoutUser,
+};
