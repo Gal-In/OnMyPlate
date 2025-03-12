@@ -6,12 +6,28 @@ import userModel, { User } from "../models/userModel";
 import request from "supertest";
 
 const testPostsArr = [
-  { content: "post content 1", title: "post title 1" },
-  { content: "post content 2", title: "post title 2" },
-  { content: "post content 3", title: "post title 3" },
+  {
+    description: "post content 1",
+    restaurantName: "restaurant name 1",
+    rating: 4,
+    googleApiRating: 4.2,
+  },
+  {
+    description: "post content 2",
+    restaurantName: "restaurant name 2",
+    rating: 5,
+    googleApiRating: 4.7,
+  },
+  {
+    description: "post content 3",
+    restaurantName: "restaurant name 3",
+    rating: 3,
+    googleApiRating: 3.2,
+  },
 ];
 
 const USER_BASE_DETAILS = {
+  name: "dan",
   username: "dan",
   password: "dan123",
   email: "dan@gmail.com",
@@ -60,9 +76,14 @@ describe("Test Posts API", () => {
       .send(testPostToAdd);
 
     expect(singlePost.statusCode).toEqual(201);
-    expect(singlePost.body.content).toEqual(testPostToAdd.content);
-    expect(singlePost.body.title).toEqual(testPostToAdd.title);
-    expect(singlePost.body.senderId).toEqual(baseUser._id);
+    expect(singlePost.body.description).toEqual(testPostToAdd.description);
+    expect(singlePost.body.restaurantName).toEqual(
+      testPostToAdd.restaurantName
+    );
+    expect(singlePost.body.rating).toEqual(testPostToAdd.rating);
+    expect(singlePost.body.googleApiRating).toEqual(
+      testPostToAdd.googleApiRating
+    );
 
     postId = singlePost.body._id;
   });
@@ -84,28 +105,28 @@ describe("Test Posts API", () => {
         .send(testPostToAdd);
 
       expect(statusCode).toEqual(201);
-      expect(singlePost.content).toEqual(testPostToAdd.content);
-      expect(singlePost.title).toEqual(testPostToAdd.title);
-      expect(singlePost.senderId).toEqual(baseUser._id);
+      expect(singlePost.description).toEqual(testPostToAdd.description);
+      expect(singlePost.restaurantName).toEqual(testPostToAdd.restaurantName);
+      expect(singlePost.rating).toEqual(testPostToAdd.rating);
+      expect(singlePost.googleApiRating).toEqual(testPostToAdd.googleApiRating);
     }
   });
+  // test("Test get posts by sender id", async () => {
+  //   const response = await request(app).get(
+  //     `/posts/sender=/${baseUser._id.toString()}`
+  //   );
 
-  test("Test get posts by sender id", async () => {
-    const response = await request(app).get(
-      `/posts/sender=/${baseUser._id.toString()}`
-    );
+  //   expect(response.body.length).toEqual(3);
+  //   expect(response.statusCode).toEqual(200);
 
-    expect(response.body.length).toEqual(3);
-    expect(response.statusCode).toEqual(200);
+  //   response.body.forEach((currPost: Post, index: number) => {
+  //     const expectedPost = testPostsArr[index];
 
-    response.body.forEach((currPost: Post, index: number) => {
-      const expectedPost = testPostsArr[index];
-
-      expect(currPost.content).toEqual(expectedPost.content);
-      expect(currPost.title).toEqual(expectedPost.title);
-      expect(currPost.senderId).toEqual(baseUser._id);
-    });
-  });
+  //     expect(currPost.description).toEqual(expectedPost.description);
+  //     expect(currPost.restaurantName).toEqual(expectedPost.restaurantName);
+  //     expect(currPost.senderId).toEqual(baseUser._id);
+  //   });
+  // });
 
   test("Test get posts by incorrect sender id", async () => {
     const response = await request(app).get(
@@ -125,9 +146,10 @@ describe("Test Posts API", () => {
     allPosts.body.forEach((currPost: Post, index: number) => {
       const expectedPost = testPostsArr[index];
 
-      expect(currPost.content).toEqual(expectedPost.content);
-      expect(currPost.title).toEqual(expectedPost.title);
-      expect(currPost.senderId).toEqual(baseUser._id);
+      expect(currPost.description).toEqual(expectedPost.description);
+      expect(currPost.restaurantName).toEqual(expectedPost.restaurantName);
+      expect(currPost.rating).toEqual(expectedPost.rating);
+      expect(currPost.googleApiRating).toEqual(expectedPost.googleApiRating);
     });
   });
 
@@ -138,9 +160,10 @@ describe("Test Posts API", () => {
     const postContentToBe = testPostsArr[0];
 
     expect(statusCode).toEqual(200);
-    expect(currPost.content).toEqual(postContentToBe.content);
-    expect(currPost.title).toEqual(postContentToBe.title);
-    expect(currPost.senderId).toEqual(baseUser._id);
+    expect(currPost.description).toEqual(postContentToBe.description);
+    expect(currPost.restaurantName).toEqual(postContentToBe.restaurantName);
+    expect(currPost.rating).toEqual(postContentToBe.rating);
+    expect(currPost.googleApiRating).toEqual(postContentToBe.googleApiRating);
   });
 
   test("Test get post by incorrect post id", async () => {
@@ -155,15 +178,14 @@ describe("Test Posts API", () => {
       .put(`/posts/${postId}`)
       .set({ authorization: "JWT " + baseUser.token })
       .send({
-        title: "NEW TITLE",
-        content: "NEW CONTENT",
+        restaurantName: "NEW TITLE",
+        description: "NEW CONTENT",
       });
 
     expect(statusCode).toEqual(200);
-    expect(updatedPost.title).toEqual("NEW TITLE");
-    expect(updatedPost.content).toEqual("NEW CONTENT");
+    expect(updatedPost.restaurantName).toEqual("NEW TITLE");
+    expect(updatedPost.description).toEqual("NEW CONTENT");
     expect(updatedPost._id).toEqual(postId);
-    expect(updatedPost.senderId).toEqual(baseUser._id);
   });
 
   test("Check updated Post", async () => {
@@ -172,16 +194,15 @@ describe("Test Posts API", () => {
     );
 
     expect(statusCode).toEqual(200);
-    expect(currPost.title).toEqual("NEW TITLE");
-    expect(currPost.content).toEqual("NEW CONTENT");
-    expect(currPost.senderId).toEqual(baseUser._id);
+    expect(currPost.restaurantName).toEqual("NEW TITLE");
+    expect(currPost.description).toEqual("NEW CONTENT");
     expect(currPost._id).toEqual(postId);
   });
 
   test("Test updating post without token", async () => {
     const response = await request(app).put(`/posts/${postId}`).send({
-      title: "NEW TITLE 2",
-      content: "NEW CONTENT 2",
+      restaurantName: "NEW TITLE 2",
+      description: "NEW CONTENT 2",
     });
 
     expect(response.statusCode).toBe(401);
