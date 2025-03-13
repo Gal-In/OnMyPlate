@@ -138,6 +138,19 @@ const findRestaurantByName = async ({
   }
 };
 
+const chatGptApi = async (restaurantName: string) => {
+  try {
+    const response = await axios.post<GoogleMapApiRes[]>(
+      process.env.REACT_APP_SERVER_URL + `/googleApi/chatGpt`,
+      restaurantName
+    );
+
+    return response.data;
+  } catch (e) {
+    return e;
+  }
+};
+
 export {
   saveNewUser,
   verifyUser,
@@ -147,4 +160,5 @@ export {
   logoutUser,
   uploadPostPictures,
   findRestaurantByName,
+  chatGptApi,
 };

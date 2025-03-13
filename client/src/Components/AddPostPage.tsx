@@ -6,13 +6,15 @@ import {
   IconButton,
   Rating,
   TextField,
+  Tooltip,
 } from "@mui/material";
 import SignPageWrapper from "./CardWrapper";
 import { useMemo, useState } from "react";
-import { Close } from "@mui/icons-material";
+import { Close, Diamond } from "@mui/icons-material";
 import ImagesList from "./ImagesList";
 import { useAuthenticatedServerRequest } from "../Services/authenticatedServerRequest";
 import {
+  chatGptApi,
   findRestaurantByName,
   GoogleMapApiRes,
   uploadPostPictures,
@@ -101,6 +103,11 @@ const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
     [restaurantName, description, imagesUrl]
   );
 
+  const isAbleToGenerateAutoDes = useMemo(
+    () => imagesUrl.length && restaurantName.length,
+    [restaurantName, imagesUrl.length]
+  );
+
   return (
     <>
       <SignPageWrapper
@@ -146,14 +153,42 @@ const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
                 gap: 1.5,
               }}
             >
-              <Rating
-                value={rating}
-                precision={0.5}
-                onChange={(_, newRating) => {
-                  setRating(newRating ?? 0);
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
                 }}
-                disabled={isLoading}
-              />
+              >
+                <Rating
+                  value={rating}
+                  precision={0.5}
+                  onChange={(_, newRating) => {
+                    setRating(newRating ?? 0);
+                  }}
+                  disabled={isLoading}
+                />
+                <Tooltip
+                  title={
+                    "צור תיאור אוטומטי" +
+                    `${
+                      isAbleToGenerateAutoDes
+                        ? ""
+                        : " - יש להוסיף לפחות תמונה אחת ושם מסעדה"
+                    }`
+                  }
+                >
+                  <IconButton
+                    onClick={() => {
+                      if (!isAbleToGenerateAutoDes) return;
+                      chatGptApi(restaurantName);
+                    }}
+                  >
+                    <Diamond />
+                  </IconButton>
+                </Tooltip>
+              </div>
               <TextField
                 id="name"
                 autoFocus
