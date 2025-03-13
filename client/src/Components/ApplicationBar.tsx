@@ -17,9 +17,13 @@ import { Add } from "@mui/icons-material";
 
 type ApplicationBarProps = {
   setIsAddingPost: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsEditingProfile: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const ApplicationBar = ({ setIsAddingPost }: ApplicationBarProps) => {
+const ApplicationBar = ({
+  setIsAddingPost,
+  setIsEditingProfile,
+}: ApplicationBarProps) => {
   const [{ refreshToken }, _, removeCookie] = useCookies(["refreshToken"]);
   const { user, setUser, setAccessToken } = useUser();
 
@@ -48,7 +52,7 @@ const ApplicationBar = ({ setIsAddingPost }: ApplicationBarProps) => {
           </IconButton>
         </Tooltip>
         <Tooltip title={"ערוך פרופיל"}>
-          <IconButton sx={{ p: 1 }}>
+          <IconButton sx={{ p: 1 }} onClick={() => setIsEditingProfile(true)}>
             <Avatar
               src={imageUrl}
               sx={{

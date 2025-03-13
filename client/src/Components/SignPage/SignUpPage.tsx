@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Box,
   Button,
@@ -22,23 +22,32 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { useUser } from "../../Context/useUser";
 import SignPageWrapper from "../CardWrapper";
 import SignInPgae from "./SignInPage";
-import { UserRequestResponse } from "../../Types/userTypes";
+import { User, UserRequestResponse } from "../../Types/userTypes";
+import { Close, Edit } from "@mui/icons-material";
 
-const SignUpPage = () => {
+type SignUpPageProps = {
+  user?: User | null;
+  onFinish?: () => void;
+};
+
+const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
   const [isSignUp, setIsSignUp] = useState<boolean>(true);
-  const [name, setName] = useState<string>("");
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
+  const [name, setName] = useState<string>(user?.name ?? "");
+  const [username, setUsername] = useState<string>(user?.username ?? "");
+  const [password, setPassword] = useState<string>(user ? "******" : "");
+  const [email, setEmail] = useState<string>(user?.email ?? "");
   const [fieldsError, setFieldsError] = useState<Record<string, string>>({});
   const [imageUrl, setImageUrl] = useState<null | string>(null);
   const [requestErrorMessage, setRequestErrorMessage] = useState<string>("");
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
 
   const { setUser, setAccessToken } = useUser();
 
   const googleLogin = useGoogleLogin({
     onSuccess: (credentials) => handleGoogleLogin(credentials.access_token),
   });
+
+  const isAbleToEdit = useMemo(() => !user || isEditMode, [user, isEditMode]);
 
   const handleGoogleLogin = async (googleAcessToken: string) => {
     const response = await addGoogleUser(googleAcessToken);
@@ -141,10 +150,19 @@ const SignUpPage = () => {
 
   return isSignUp ? (
     <SignPageWrapper
-      title={"מסך הרשמה"}
+      title={user ? "ערוך פרופיל" : "מסך הרשמה"}
       errorMessage={requestErrorMessage}
       setErrorMessage={setRequestErrorMessage}
     >
+      <IconButton
+        sx={{
+          position: "absolute",
+        }}
+        onClick={() => onFinish && onFinish()}
+      >
+        <Close />
+      </IconButton>
+
       <div
         style={{
           display: "flex",
@@ -180,6 +198,7 @@ const SignUpPage = () => {
           <label htmlFor="add-file">
             <Tooltip title="החלף תמונת פרופיל">
               <IconButton
+                disabled={!isAbleToEdit}
                 component="span"
                 sx={{
                   position: "absolute",
@@ -227,6 +246,7 @@ const SignUpPage = () => {
             value={name}
             onChange={(e) => setName(e.target.value)}
             slotProps={{ htmlInput: { maxLength: 20 } }}
+            disabled={!isAbleToEdit}
           />
           <TextField
             error={!!fieldsError.username}
@@ -240,6 +260,7 @@ const SignUpPage = () => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             slotProps={{ htmlInput: { maxLength: 15 } }}
+            disabled={!isAbleToEdit}
           />
           <TextField
             error={!!fieldsError.email}
@@ -254,6 +275,7 @@ const SignUpPage = () => {
             color={fieldsError.email ? "error" : "primary"}
             label="אימייל"
             slotProps={{ htmlInput: { maxLength: 25 } }}
+            disabled={!!user}
           />
           <TextField
             error={!!fieldsError.password}
@@ -269,41 +291,71 @@ const SignUpPage = () => {
             slotProps={{ htmlInput: { maxLength: 20 } }}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            disabled={!!user}
           />
         </FormControl>
-        <Button fullWidth variant="contained" onClick={handleSubmit}>
-          הרשמה
-        </Button>
+        {!user && (
+          <Button fullWidth variant="contained" onClick={handleSubmit}>
+            הרשמה
+          </Button>
+        )}
       </Box>
-      <Divider>אופציות נוספות</Divider>
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-        <Button
-          fullWidth
-          variant="outlined"
-          onClick={() => googleLogin()}
-          startIcon={
-            <Avatar
-              src={"/googleLogo.png"}
-              sx={{
-                maxWidth: "2rem",
-                maxHeight: "2rem",
-                objectFit: "contain",
-                paddingRight: 1,
-              }}
-            />
-          }
-        >
-          הירשם באמצעות גוגל
-        </Button>
-        <Typography sx={{ textAlign: "center" }}>יש לך כבר משתמש?</Typography>
-        <Button
-          sx={{ textAlign: "center" }}
-          variant="outlined"
-          onClick={() => setIsSignUp(false)}
-        >
-          כניסה למערכת
-        </Button>
-      </Box>
+      {!user ? (
+        <>
+          <Divider>אופציות נוספות</Divider>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <Button
+              fullWidth
+              variant="outlined"
+              onClick={() => googleLogin()}
+              startIcon={
+                <Avatar
+                  src={"/googleLogo.png"}
+                  sx={{
+                    maxWidth: "2rem",
+                    maxHeight: "2rem",
+                    objectFit: "contain",
+                    paddingRight: 1,
+                  }}
+                />
+              }
+            >
+              הירשם באמצעות גוגל
+            </Button>
+            <Typography sx={{ textAlign: "center" }}>
+              יש לך כבר משתמש?
+            </Typography>
+            <Button
+              sx={{ textAlign: "center" }}
+              variant="outlined"
+              onClick={() => setIsSignUp(false)}
+            >
+              כניסה למערכת
+            </Button>
+          </Box>
+        </>
+      ) : (
+        <>
+          {isEditMode ? (
+            <Button
+              variant="outlined"
+              sx={{ width: "fitContent", alignSelf: "center" }}
+              onClick={() => {}}
+            >
+              {"עדכן פרופיל"}
+            </Button>
+          ) : (
+            <Button
+              endIcon={<Edit />}
+              variant="outlined"
+              sx={{ width: "fitContent", alignSelf: "center" }}
+              onClick={() => setIsEditMode(true)}
+            >
+              {"ערוך פרופיל"}
+            </Button>
+          )}
+        </>
+      )}
     </SignPageWrapper>
   ) : (
     <SignInPgae

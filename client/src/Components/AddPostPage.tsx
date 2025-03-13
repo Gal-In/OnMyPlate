@@ -37,7 +37,6 @@ const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
   const [restaurantOptions, setRestaurantOptions] = useState<GoogleMapApiRes[]>(
     []
   );
-  // const [selectedRestaurant, setSelectedRestaurant] = useState<GoogleMapApiRes | null>(null)
 
   const { addNewPost, updatePost } = useAuthenticatedServerRequest();
 
@@ -87,8 +86,9 @@ const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
       const photosUrl = files.map((file) => postId + "_" + file.name);
 
       await uploadPostPictures(postId, files);
-
       await updatePost(postId, { photosUrl });
+
+      setIsAddingPost(false);
     } else {
     }
   };
