@@ -128,13 +128,29 @@ const findRestaurantByName = async ({
 }) => {
   try {
     const response = await axios.post<GoogleMapApiRes[]>(
-      process.env.REACT_APP_SERVER_URL + `/googleApi`,
+      process.env.REACT_APP_SERVER_URL + `/googleApi/restaurantApi`,
       { input, inputType, fields, language }
     );
 
     return response.data;
   } catch (e) {
     return e;
+  }
+};
+
+const generatePostDescription = async (
+  restaurantName: string,
+  images: string[]
+): Promise<{ description: string } | unknown> => {
+  try {
+    const { data } = await axios.post<{ description: string }>(
+      process.env.REACT_APP_SERVER_URL + `/googleApi/generateDescription`,
+      { images, restaurantName }
+    );
+
+    return data;
+  } catch (error) {
+    return error;
   }
 };
 
@@ -147,4 +163,5 @@ export {
   logoutUser,
   uploadPostPictures,
   findRestaurantByName,
+  generatePostDescription,
 };
