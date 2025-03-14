@@ -24,6 +24,7 @@ import SignPageWrapper from "../CardWrapper";
 import SignInPgae from "./SignInPage";
 import { User, UserRequestResponse } from "../../Types/userTypes";
 import { Close, Edit } from "@mui/icons-material";
+import { useAuthenticatedServerRequest } from "../../Services/authenticatedServerRequest";
 
 type SignUpPageProps = {
   user?: User | null;
@@ -34,14 +35,19 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
   const [isSignUp, setIsSignUp] = useState<boolean>(true);
   const [name, setName] = useState<string>(user?.name ?? "");
   const [username, setUsername] = useState<string>(user?.username ?? "");
-  const [password, setPassword] = useState<string>(user ? "******" : "");
+  const [password, setPassword] = useState<string>(user ? "*********" : "");
   const [email, setEmail] = useState<string>(user?.email ?? "");
   const [fieldsError, setFieldsError] = useState<Record<string, string>>({});
-  const [imageUrl, setImageUrl] = useState<null | string>(null);
+  const [imageUrl, setImageUrl] = useState<null | string>(
+    user?.profilePictureExtension
+      ? `${process.env.REACT_APP_SERVER_URL}/media/profile/${user.email}.${user.profilePictureExtension}`
+      : null
+  );
   const [requestErrorMessage, setRequestErrorMessage] = useState<string>("");
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
 
   const { setUser, setAccessToken } = useUser();
+  const { updateUser } = useAuthenticatedServerRequest();
 
   const googleLogin = useGoogleLogin({
     onSuccess: (credentials) => handleGoogleLogin(credentials.access_token),
@@ -68,49 +74,102 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
   };
 
   const handleSubmit = async () => {
+    if (!validateInputs()) {
+      if (user) {
+        updateExistingUser();
+      } else {
+        addNewUser();
+      }
+    }
+  };
+
+  const addNewUser = async () => {
     let imageFile = null;
 
-    if (!validateInputs()) {
-      if (imageUrl) imageFile = await dataUrlToFile(imageUrl, email);
+    if (imageUrl) imageFile = await dataUrlToFile(imageUrl, email);
 
-      const profilePictureExtension = imageFile?.type;
+    const profilePictureExtension = imageFile?.type;
 
-      const response = await saveNewUser({
+    const response = await saveNewUser({
+      username,
+      email,
+      password,
+      name,
+      profilePictureExtension,
+    });
+    if (axios.isAxiosError(response)) {
+      if (response.status === 409) {
+        const field = response.response?.data.includes("email")
+          ? "האימייל"
+          : "שם המשתמש";
+        setRequestErrorMessage(`שים לב, ${field} כבר קיים`);
+      } else setRequestErrorMessage("קיימת תקלה בשרת, המשתמש לא נשמר");
+    } else {
+      if (imageFile) {
+        try {
+          await uploadUserProfilePicture(imageFile);
+        } catch (e) {
+          setRequestErrorMessage("קיימת תקלה בשרת, תמונת הפרופיל לא נשמרה");
+          return;
+        }
+      }
+
+      const userInfo = response as UserRequestResponse;
+
+      setUser({
         username,
         email,
-        password,
+        name,
+        isGoogleUser: userInfo.isGoogleUser,
+        profilePictureExtension: userInfo.profilePictureExtension,
+      });
+
+      setAccessToken(userInfo.accessToken);
+    }
+  };
+
+  const updateExistingUser = async () => {
+    const isUserProfileChanged =
+      (user?.profilePictureExtension && !imageUrl?.includes("media/profile")) ||
+      (!user?.profilePictureExtension && !!imageUrl);
+
+    if (
+      !isUserProfileChanged &&
+      user?.username === username &&
+      user?.name === name
+    ) {
+      onFinish && onFinish();
+      return;
+    }
+
+    let imageFile = null;
+
+    if (isUserProfileChanged && imageUrl)
+      imageFile = await dataUrlToFile(imageUrl, email);
+
+    const profilePictureExtension = imageFile?.type;
+
+    const promiseArray = [
+      updateUser({
+        username,
         name,
         profilePictureExtension,
-      });
-      if (axios.isAxiosError(response)) {
-        if (response.status === 409) {
-          const field = response.response?.data.includes("email")
-            ? "האימייל"
-            : "שם המשתמש";
-          setRequestErrorMessage(`שים לב, ${field} כבר קיים`);
-        } else setRequestErrorMessage("קיימת תקלה בשרת, המשתמש לא נשמר");
-      } else {
-        if (imageFile) {
-          try {
-            await uploadUserProfilePicture(imageFile);
-          } catch (e) {
-            setRequestErrorMessage("קיימת תקלה בשרת, תמונת הפרופיל לא נשמרה");
-            return;
-          }
-        }
+      }),
+    ];
 
-        const userInfo = response as UserRequestResponse;
+    if (imageFile) {
+      promiseArray.push(uploadUserProfilePicture(imageFile));
+    }
 
-        setUser({
-          username,
-          email,
-          name,
-          isGoogleUser: userInfo.isGoogleUser,
-          profilePictureExtension: userInfo.profilePictureExtension,
-        });
+    const [response] = await Promise.all(promiseArray);
 
-        setAccessToken(userInfo.accessToken);
-      }
+    if (axios.isAxiosError(response)) {
+      if (response.status === 409)
+        setRequestErrorMessage("שם המשתמש כבר קיים, נא החלף שם משתמש");
+      else setRequestErrorMessage("חלה שגיאה בעדכון המשתמש");
+    } else {
+      setUser(response as User);
+      onFinish && onFinish();
     }
   };
 
@@ -340,7 +399,7 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
             <Button
               variant="outlined"
               sx={{ width: "fitContent", alignSelf: "center" }}
-              onClick={() => {}}
+              onClick={handleSubmit}
             >
               {"עדכן פרופיל"}
             </Button>

@@ -1,5 +1,6 @@
 import { useAuthApi } from "../Context/useAuthApi";
 import { Post, PostToCreate } from "../Types/postTypes";
+import { User } from "../Types/userTypes";
 
 export const useAuthenticatedServerRequest = () => {
   const axios = useAuthApi();
@@ -24,5 +25,15 @@ export const useAuthenticatedServerRequest = () => {
     }
   };
 
-  return { addNewPost, updatePost };
+  const updateUser = async (userDetails: Partial<User>) => {
+    try {
+      const { data } = await axios.put("/users", userDetails);
+
+      return data;
+    } catch (error) {
+      return error;
+    }
+  };
+
+  return { addNewPost, updatePost, updateUser };
 };

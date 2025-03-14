@@ -5,7 +5,7 @@ import userModel, { User } from "../models/userModel";
 import { Types } from "mongoose";
 import axios from "axios";
 import { GoogleUserResponse } from "../types";
-import { Document } from "mongoose";
+import { relevantUserInfo, urlToFile } from "../services/service";
 
 const setUserRefreshTokens = async (
   userId: Types.ObjectId,
@@ -13,14 +13,6 @@ const setUserRefreshTokens = async (
 ) => {
   await userModel.findOneAndUpdate({ _id: userId }, { refreshTokens });
 };
-
-const relevantUserInfo = (user: Document & User) => ({
-  name: user.name,
-  username: user.username,
-  email: user.email,
-  isGoogleUser: user.isGoogleUser,
-  profilePictureExtension: user.profilePictureExtension,
-});
 
 const encryptPassword = async (password: string) => {
   const salt = await bcrypt.genSalt();
@@ -174,7 +166,7 @@ const registration = async (req: Request, res: Response) => {
       profilePictureExtension,
     });
 
-    const tokens = await generateTokens(newUser);
+    const tokens = generateTokens(newUser);
 
     res.status(201).send({ ...relevantUserInfo(newUser), ...tokens });
   } catch (error) {
@@ -228,18 +220,6 @@ const verifyGoogleUser = async (
   );
 
   return data;
-};
-
-const urlToFile = async (url: string, fileName: string) => {
-  const { data } = await axios.get(url, { responseType: "arraybuffer" });
-  const buffer = Buffer.from(data, "binary");
-
-  const file = new File([buffer], fileName + ".jpg", {
-    type: "jpg",
-    lastModified: new Date().getTime(),
-  });
-
-  return file;
 };
 
 const googleRegistration = async (req: Request, res: Response) => {

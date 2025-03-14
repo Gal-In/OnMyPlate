@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import userModel from "../models/userModel";
 import authController from "../controller/authenticationController";
+import { relevantUserInfo } from "../services/service";
 
 const getAllUsers = async (req: Request, res: Response) => {
   try {
@@ -41,8 +42,16 @@ const updateUserDetails = async (req: Request, res: Response) => {
       { new: true }
     );
 
-    res.status(200).send(newUser);
-  } catch (error) {
+    if (newUser) res.status(200).send(relevantUserInfo(newUser));
+    else res.status(400).send("user not found");
+  } catch (error: any) {
+    if (typeof error === "object" && error.codeName !== null) {
+      if (error.codeName === "DuplicateKey") {
+        res.status(409).send(error);
+        return;
+      }
+    }
+
     res.status(400).send(error);
   }
 };
