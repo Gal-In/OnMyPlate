@@ -145,6 +145,8 @@ router.get("/:id", users.getUserById);
  *                          $ref: '#/components/schemas/User'
  *           400:
  *              description: Invalid input
+ *           409:
+ *              description: Username already exist
  *           403:
  *              description: Unauthorized
  *           500:

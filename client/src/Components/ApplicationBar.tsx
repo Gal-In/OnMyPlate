@@ -56,7 +56,7 @@ const ApplicationBar = ({
             <Avatar
               src={imageUrl}
               sx={{
-                "& img": { objectFit: "contain" },
+                "& img": { objectFit: "fill" },
               }}
             />
           </IconButton>
