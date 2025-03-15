@@ -1,5 +1,6 @@
 import axios from "axios";
 import { DbUser, UserRequestResponse } from "../Types/userTypes";
+import { Post } from "../Types/postTypes";
 
 export type GoogleMapApiRes = {
   formatted_address: string;
@@ -154,6 +155,30 @@ const generatePostDescription = async (
   }
 };
 
+const getPostCount = async () => {
+  try {
+    const { data } = await axios.get<{ amount: string }>(
+      process.env.REACT_APP_SERVER_URL + "/posts/amount"
+    );
+
+    return data;
+  } catch (error: unknown) {
+    return error;
+  }
+};
+
+const getPagedPosts = async (skip: number, limit: number): Promise<Post[]> => {
+  try {
+    const { data } = await axios.get<Post[]>(
+      process.env.REACT_APP_SERVER_URL + `/posts/${skip}/${limit}`
+    );
+
+    return data;
+  } catch (error: unknown) {
+    return [];
+  }
+};
+
 export {
   saveNewUser,
   verifyUser,
@@ -164,4 +189,6 @@ export {
   uploadPostPictures,
   findRestaurantByName,
   generatePostDescription,
+  getPostCount,
+  getPagedPosts,
 };

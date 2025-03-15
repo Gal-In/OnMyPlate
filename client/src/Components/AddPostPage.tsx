@@ -12,7 +12,7 @@ import SignPageWrapper from "./CardWrapper";
 import { useMemo, useState } from "react";
 import { Close, Diamond } from "@mui/icons-material";
 import ImagesList from "./ImagesList";
-import { useAuthenticatedServerRequest } from "../Services/authenticatedServerRequest";
+import { useAuthenticatedServerRequest } from "../Services/useAuthenticatedServerRequest";
 import {
   findRestaurantByName,
   generatePostDescription,
@@ -73,6 +73,9 @@ const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
         photosUrl: [],
       });
 
+      console.log({ response });
+      console.log({ imagesUrl });
+
       if (axios.isAxiosError(response)) {
         setErrorMessage("חלה תקלה בשמירת הפוסט");
         return;
@@ -84,6 +87,8 @@ const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
           dataUrlToFile(imageUrl, index.toString())
         )
       );
+
+      console.log({ files });
 
       const photosUrl = files.map((file) => postId + "_" + file.name);
 

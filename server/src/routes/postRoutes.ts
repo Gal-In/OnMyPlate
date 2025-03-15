@@ -124,7 +124,9 @@ router.post("/", authenticationController.authenticate, post.addNewPost);
  *          500:
  *              description: Server Error
  */
-router.get("/", post.getAllPosts);
+router.get("/:skip/:limit", post.getPosts);
+
+router.get("/amount", post.getAmountOfPosts);
 
 /**
  * @swagger
@@ -234,6 +236,7 @@ router.get("/sender=/:senderId", post.getPostsBySenderId);
  *           500:
  *              description: Server Error
  */
+
 router.put("/:id", authenticationController.authenticate, post.updatePost);
 
 export default router;
