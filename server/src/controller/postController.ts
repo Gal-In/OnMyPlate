@@ -17,10 +17,16 @@ const addNewPost = async (req: Request, res: Response) => {
   }
 };
 
-const getAllPosts = async (req: Request, res: Response) => {
+const getPosts = async (req: Request, res: Response) => {
   try {
-    const allPosts = await postModel.find({});
-    res.status(200).send(allPosts);
+    const { skip, limit } = req.params;
+
+    const posts = await postModel
+      .find({})
+      .skip(Number(skip))
+      .limit(Number(limit));
+
+    res.status(200).send(posts);
   } catch (error) {
     res.status(400).send(error);
   }
@@ -67,10 +73,21 @@ const updatePost = async (req: Request, res: Response) => {
   }
 };
 
+const getAmountOfPosts = async (req: Request, res: Response) => {
+  try {
+    const postsNumber = await postModel.countDocuments();
+
+    res.status(200).send({ amount: postsNumber });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 export default {
   addNewPost,
-  getAllPosts,
+  getPosts,
   getPostById,
   getPostsBySenderId,
   updatePost,
+  getAmountOfPosts,
 };

@@ -6,16 +6,16 @@ type CustomAxiosConfig = InternalAxiosRequestConfig & {
   isNotFirstRequest?: boolean;
 };
 
-const authorizedAxios = axios.create({
-  baseURL: process.env.REACT_APP_SERVER_URL,
-});
-
 const getAuthorizedAxios = (
   accessToken: string | null,
   setAccessToken: React.Dispatch<React.SetStateAction<string | null>>,
   refreshToken: string,
   setRefreshToken: (newRefreshToken: string) => void
 ) => {
+  const authorizedAxios = axios.create({
+    baseURL: process.env.REACT_APP_SERVER_URL,
+  });
+
   authorizedAxios.interceptors.request.use((requestConfig) => {
     if (accessToken?.length)
       requestConfig.headers["Authorization"] = `Bearer ${accessToken}`;
@@ -32,17 +32,16 @@ const getAuthorizedAxios = (
         !config.isNotFirstRequest
       ) {
         config.isNotFirstRequest = true;
-
         const response = await refreshAccessToken(refreshToken);
 
         if (response && !axios.isAxiosError(response)) {
-          const { accessToken, refreshToken } = response as UserRequestResponse;
+          const tokens = response as UserRequestResponse;
 
-          config.headers["Authorization"] = `Bearer ${accessToken}`;
-          setAccessToken(accessToken);
-          setRefreshToken(refreshToken);
+          config.headers["Authorization"] = `Bearer ${tokens.accessToken}`;
+          setAccessToken(tokens.accessToken);
+          setRefreshToken(tokens.refreshToken);
 
-          return authorizedAxios;
+          return await axios(config);
         }
       }
 
