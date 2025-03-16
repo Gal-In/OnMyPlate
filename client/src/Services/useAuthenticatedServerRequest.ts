@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useAuthApi } from "../Context/useAuthApi";
 import { Post, PostToCreate } from "../Types/postTypes";
 import { User } from "../Types/userTypes";

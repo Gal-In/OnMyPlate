@@ -9,8 +9,8 @@ import { useState } from "react";
 
 type ImagesListProps = {
   isAbleToAdd: boolean;
-  imagesUrl: any[];
-  setImagesUrl: React.Dispatch<React.SetStateAction<any[]>>;
+  imagesUrl: string[];
+  setImagesUrl: React.Dispatch<React.SetStateAction<string[]>>;
   setErrorMessage: React.Dispatch<React.SetStateAction<string>>;
   maxImagesToAdd?: number;
 };

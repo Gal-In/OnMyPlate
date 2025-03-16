@@ -44,7 +44,7 @@ const ApplicationBar = ({
   );
 
   return (
-    <AppBar position="static" dir="rtl">
+    <AppBar position="sticky" dir="rtl">
       <Toolbar>
         <Tooltip title={"התנתק"}>
           <IconButton sx={{ p: 1 }} onClick={logout}>

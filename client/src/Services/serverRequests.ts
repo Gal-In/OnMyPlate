@@ -1,5 +1,6 @@
 import axios from "axios";
 import { DbUser, UserRequestResponse } from "../Types/userTypes";
+import { Post } from "../Types/postTypes";
 
 export type GoogleMapApiRes = {
   formatted_address: string;
@@ -128,13 +129,53 @@ const findRestaurantByName = async ({
 }) => {
   try {
     const response = await axios.post<GoogleMapApiRes[]>(
-      process.env.REACT_APP_SERVER_URL + `/googleApi`,
+      process.env.REACT_APP_SERVER_URL + `/googleApi/restaurantApi`,
       { input, inputType, fields, language }
     );
 
     return response.data;
   } catch (e) {
     return e;
+  }
+};
+
+const generatePostDescription = async (
+  restaurantName: string,
+  images: string[]
+): Promise<{ description: string } | unknown> => {
+  try {
+    const { data } = await axios.post<{ description: string }>(
+      process.env.REACT_APP_SERVER_URL + `/googleApi/generateDescription`,
+      { images, restaurantName }
+    );
+
+    return data;
+  } catch (error) {
+    return error;
+  }
+};
+
+const getPostCount = async () => {
+  try {
+    const { data } = await axios.get<{ amount: string }>(
+      process.env.REACT_APP_SERVER_URL + "/posts/amount"
+    );
+
+    return data;
+  } catch (error: unknown) {
+    return error;
+  }
+};
+
+const getPagedPosts = async (skip: number, limit: number): Promise<Post[]> => {
+  try {
+    const { data } = await axios.get<Post[]>(
+      process.env.REACT_APP_SERVER_URL + `/posts/${skip}/${limit}`
+    );
+
+    return data;
+  } catch (error: unknown) {
+    return [];
   }
 };
 
@@ -147,4 +188,7 @@ export {
   logoutUser,
   uploadPostPictures,
   findRestaurantByName,
+  generatePostDescription,
+  getPostCount,
+  getPagedPosts,
 };

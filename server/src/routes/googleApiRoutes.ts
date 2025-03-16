@@ -1,8 +1,12 @@
 import express from "express";
-import { findRestaurantInGoogleApiByName } from "../controller/googleApiController";
+import {
+  findRestaurantInGoogleApiByName,
+  generateRestaurtDescriptionWithGeminiAi,
+} from "../controller/googleApiController";
 
 const router = express.Router();
 
-router.post("/", findRestaurantInGoogleApiByName);
+router.post("/restaurantApi", findRestaurantInGoogleApiByName);
+router.post("/generateDescription", generateRestaurtDescriptionWithGeminiAi);
 
 export default router;

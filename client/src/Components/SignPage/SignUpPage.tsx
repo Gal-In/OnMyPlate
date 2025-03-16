@@ -24,7 +24,7 @@ import SignPageWrapper from "../CardWrapper";
 import SignInPgae from "./SignInPage";
 import { User, UserRequestResponse } from "../../Types/userTypes";
 import { Close, Edit } from "@mui/icons-material";
-import { useAuthenticatedServerRequest } from "../../Services/authenticatedServerRequest";
+import { useAuthenticatedServerRequest } from "../../Services/useAuthenticatedServerRequest";
 
 type SignUpPageProps = {
   user?: User | null;
