@@ -17,25 +17,33 @@ const router = express.Router();
  *     Post:
  *       type: object
  *       required:
- *         - title
+ *         - restaurantName
  *         - senderId
  *       properties:
  *         _id:
  *           type: string
  *           description: Db generated post id
- *         title:
+ *         restaurantName:
  *           type: string
- *           description: Posts title
- *         content:
+ *           description: Posts restaurant name
+ *         description:
  *           type: string
  *           description: Posts content
+ *         rating:
+ *           type: number
+ *           description: User rating
+ *         googleApiRating:
+ *           type: number
+ *           description: Google api rating
  *         senderId:
  *           type: string
  *           description: The id of the user who published the post
  *       example:
  *         _id: 6741b6ec0a270ec3d5875110
- *         title: This is the title of the post
- *         content: This is the content of the post
+ *         restaurantName: some restaurant
+ *         description: This is the content of the post
+ *         rating: 4
+ *         googleApiRating: 4.3
  *         senderId: 6780eba5f7a9d4a880c56d6b
  */
 
@@ -56,16 +64,30 @@ const router = express.Router();
  *                  schema:
  *                      type: object
  *                      properties:
- *                          title:
+ *                          restaurantName:
  *                              type: string
- *                              description: Posts title
- *                              example: A new post!
- *                          content:
+ *                              description: Restaurant name
+ *                              example: Jaja
+ *                          description:
  *                              type: string
  *                              description: Posts content
  *                              example: Here you enter your post content
+ *                          rating:
+ *                              type: number
+ *                              description: restaurant rating by user
+ *                              example: 4
+ *                          googleApiRating:
+ *                              type: number
+ *                              description: restaurant rating by google api
+ *                              example: 4.2
+ *                          photosUrl:
+ *                              type: array
+ *                              description: restaurant photos urls
+ *                              example: []
  *                      required:
- *                        - title
+ *                        - restaurantName
+ *                        - rating
+ *                        - googleApiRating
  *      responses:
  *          201:
  *              description: New post
@@ -190,13 +212,13 @@ router.get("/sender=/:senderId", post.getPostsBySenderId);
  *                  schema:
  *                      type: object
  *                      properties:
- *                          title:
+ *                          restaurantName:
  *                              type: string
- *                              description: Posts title
- *                              example: Updated post title!
- *                          content:
+ *                              description: Posts restaurant name
+ *                              example: Vivino
+ *                          description:
  *                              type: string
- *                              description: Posts content
+ *                              description: Posts description
  *                              example: Here you enter your updated post content
  *      responses:
  *           200:

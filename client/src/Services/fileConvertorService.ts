@@ -1,6 +1,6 @@
 const filesExtensions = {
   "image/png": "png",
-  "image/jpeg": "jpg",
+  "image/jpeg": "jpeg",
   "image/jpg": "jpg",
   "image/svg+xml": "svg",
 };
@@ -12,14 +12,13 @@ const dataUrlToFile = async (
   const response = await fetch(dataUrl);
   const blob = await response.blob();
 
-  return new File(
-    [blob],
-    fileName + "." + filesExtensions[blob.type as keyof typeof filesExtensions],
-    {
-      type: blob.type,
-      lastModified: new Date().getDate(),
-    }
-  );
+  const fileExtensionType =
+    filesExtensions[blob.type as keyof typeof filesExtensions];
+
+  return new File([blob], fileName + "." + fileExtensionType, {
+    type: fileExtensionType,
+    lastModified: new Date().getDate(),
+  });
 };
 
 export default dataUrlToFile;

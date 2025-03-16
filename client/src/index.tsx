@@ -9,9 +9,9 @@ import { prefixer } from "stylis";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-
-const GOOGLE_CLIENT_ID =
-  "593169361117-6o3lgqtkfplns34gj0g2k3ququvv3527.apps.googleusercontent.com";
+import { UserContextProvider } from "./Context/useUser";
+import { CookiesProvider } from "react-cookie";
+import { AuthApiContextProvider } from "./Context/useAuthApi";
 
 const theme = createTheme({
   direction: "rtl",
@@ -39,15 +39,21 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <React.StrictMode>
-    <CacheProvider value={cacheRtl}>
-      <ThemeProvider theme={theme}>
-        <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-          <App />
-        </GoogleOAuthProvider>
-      </ThemeProvider>
-    </CacheProvider>
-  </React.StrictMode>
+  <CacheProvider value={cacheRtl}>
+    <ThemeProvider theme={theme}>
+      <GoogleOAuthProvider
+        clientId={process.env.REACT_APP_GOOGLE_OAUTH_CLIENT_ID as string}
+      >
+        <UserContextProvider>
+          <AuthApiContextProvider>
+            <CookiesProvider>
+              <App />
+            </CookiesProvider>
+          </AuthApiContextProvider>
+        </UserContextProvider>
+      </GoogleOAuthProvider>
+    </ThemeProvider>
+  </CacheProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

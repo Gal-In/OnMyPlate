@@ -23,11 +23,16 @@ const router = express.Router();
  * @swagger
  * components:
  *  responses:
- *      tokensResponse:
- *          description: Retrives the refresh token and the access token of this user
+ *      tokensAndUserResponse:
+ *          description: Retrives the refresh token and the access token of the user, also his basic details
  *          content:
  *              application/json:
  *                  example:
+ *                      name: tom
+ *                      username: tom123
+ *                      email: tome@gmail.com
+ *                      isGoogleUser: false
+ *                      profilePictureExtension: jpg
  *                      refreshToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ODIzYTI1ZjYwNDE4YTI1YTk2YTY1MiIsImlhdCI6MTczNjU4ODY4NH0.ZmNBtFS425kxVfAp6wXJWUnhQMZT-oN1CdI-uxNhrRg
  *                      accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ODIzYTI1ZjYwNDE4YTI1YTk2YTY1MiIsImlhdCI6MTczNjU4ODY4NCwiZXhwIjoxNzM2NjA2Njg0fQ.mD2M4R5fX0o0bHZXjUS35WtGalTmaMuiaWyMzXlMWNs
  */
@@ -60,7 +65,7 @@ const router = express.Router();
  *                              example: tom123
  *      responses:
  *          200:
- *               $ref: '#/components/responses/tokensResponse'
+ *               $ref: '#/components/responses/tokensAndUserResponse'
  *          400:
  *              description: Details are incorrect
  *          500:
@@ -163,11 +168,7 @@ router.post("/registration", authentication.registration);
  *                              example: ya29.a0AeXRPp41OtyWEMBrCtA45ntxD3KNBEUZ326I541_-SRJdTpBYZKPMyO6UJlR81zRzJaXKn3wp1sAi3V4PKVJRHWg9SwnMfo7WIF8nGCS_7fFHHfcEbvKWl5cgmShar8_7j8lbyEFGXRVoVnto1y3qk_Z61YdiUcJL0EOFHOIaCgYKAaUSARESFQHGX2MiT4TAZl9zUVBK_rN21d3CfQ0175
  *      responses:
  *          201:
- *              description: New User
- *              content:
- *                  application/json:
- *                      schema:
- *                          $ref: '#/components/schemas/User'
+ *              $ref: '#/components/responses/tokensAndUserResponse'
  *          400:
  *              description: Invalid input
  *          500:
@@ -187,7 +188,7 @@ router.post("/googleRegistration", authentication.googleRegistration);
  *          - bearerAuth: []
  *      responses:
  *          200:
- *              $ref: '#/components/responses/tokensResponse'
+ *              $ref: '#/components/responses/tokensAndUserResponse'
  *          401:
  *              description: Unauthorized - token not found
  *          403:

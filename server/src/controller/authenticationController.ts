@@ -5,6 +5,7 @@ import userModel, { User } from "../models/userModel";
 import { Types } from "mongoose";
 import axios from "axios";
 import { GoogleUserResponse } from "../types";
+import { relevantUserInfo, urlToFile } from "../services/service";
 
 const setUserRefreshTokens = async (
   userId: Types.ObjectId,
@@ -78,7 +79,10 @@ const login = async (req: Request, res: Response) => {
 
       await setUserRefreshTokens(currUser._id, newTokens);
 
-      res.status(200).send(tokens);
+      res.status(200).send({
+        ...tokens,
+        ...relevantUserInfo(currUser),
+      });
       return;
     }
   }
@@ -132,7 +136,7 @@ const logout = async (req: Request, res: Response) => {
 };
 
 const registration = async (req: Request, res: Response) => {
-  const { username, email, password, name } = req.body;
+  const { username, email, password, name, profilePictureExtension } = req.body;
 
   if (
     !username?.length ||
@@ -159,9 +163,12 @@ const registration = async (req: Request, res: Response) => {
       username,
       email,
       password: encryptedPassword,
+      profilePictureExtension,
     });
 
-    res.status(201).send(newUser);
+    const tokens = generateTokens(newUser);
+
+    res.status(201).send({ ...relevantUserInfo(newUser), ...tokens });
   } catch (error) {
     res.status(400).send(error);
   }
@@ -196,7 +203,9 @@ const refreshToken = async (req: Request, res: Response) => {
           newRefreshTokens[newRefreshTokens.indexOf(token)] = refreshToken;
           await setUserRefreshTokens(user._id, newRefreshTokens);
 
-          res.status(200).send({ accessToken, refreshToken });
+          res
+            .status(200)
+            .send({ accessToken, refreshToken, ...relevantUserInfo(user) });
         }
       }
     );
@@ -213,21 +222,8 @@ const verifyGoogleUser = async (
   return data;
 };
 
-const urlToFile = async (url: string, fileName: string) => {
-  const { data } = await axios.get(url, { responseType: "arraybuffer" });
-  const buffer = Buffer.from(data, "binary");
-
-  const file = new File([buffer], fileName + ".jpg", {
-    type: "image/jpeg",
-    lastModified: new Date().getTime(),
-  });
-
-  return file;
-};
-
 const googleRegistration = async (req: Request, res: Response) => {
   const { userToken }: { userToken: string } = req.body;
-  console.log({ userToken });
 
   if (userToken) {
     const data = await verifyGoogleUser(userToken);
@@ -240,13 +236,17 @@ const googleRegistration = async (req: Request, res: Response) => {
       return;
     }
 
-    const newUser = await userModel.create({
+    const file = await urlToFile(picture, email);
+
+    const newUserInfo = {
       name,
       email,
       isGoogleUser: true,
-    });
+      profilePictureExtension: file.type,
+    };
 
-    const file = await urlToFile(picture, email);
+    const newUser = await userModel.create(newUserInfo);
+
     const formData = new FormData();
     formData.append("file", file);
 
@@ -255,7 +255,9 @@ const googleRegistration = async (req: Request, res: Response) => {
       formData
     );
 
-    res.status(201).send(newUser);
+    const tokens = generateTokens(newUser);
+
+    res.status(201).send({ ...newUserInfo, ...tokens });
   } else {
     res.status(400).send("user google token not found");
   }

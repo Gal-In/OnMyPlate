@@ -10,6 +10,7 @@ import dotenv from "dotenv";
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
 import cors from "cors";
+import googleApiRoutes from "./routes/googleApiRoutes";
 
 const options = {
   definition: {
@@ -42,6 +43,8 @@ app.use("/auth", authenticationRoutes);
 
 app.use("/file", fileRoutes);
 app.use("/media", express.static("media"));
+
+app.use("/googleApi", googleApiRoutes);
 
 const specs = swaggerJsDoc(options);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));

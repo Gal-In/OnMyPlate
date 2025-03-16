@@ -97,6 +97,28 @@ describe("Test Users API", () => {
     expect(allUsers.statusCode).toEqual(200);
     expect(allUsers.body.length).toEqual(3);
   });
+  test("Update invalid user", async () => {
+    const {
+      body: { accessToken },
+    } = await request(app).post("/auth/login").send({
+      username: testUsersArr[0].username,
+      password: testUsersArr[0].password,
+    });
+
+    expect(accessToken).toBeDefined();
+
+    const response = await request(app)
+      .put(`/users`)
+      .set({
+        authorization: `JWT ${accessToken}`,
+      })
+      .send({
+        username: testUsersArr[1].usernmae,
+        email: "NEW EMAIL",
+      });
+
+    expect(response.statusCode).toEqual(409);
+  });
   test("Update user", async () => {
     const {
       body: { accessToken },

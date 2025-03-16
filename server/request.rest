@@ -5,8 +5,10 @@ Content-Type: application/json
 Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ODIzNDAzOTFjOGU0ZjAxOGFjOGIzYiIsImlhdCI6MTczNjU4NjI3NiwiZXhwIjoxNzM2NjA0Mjc2fQ.N3CXuOM41vA3MQEt9R-Iz1VnBVSzsaqkfVZ6sdDEk4c
 
 {
-    "title": "A really new post",
-    "content": "Here is my post content"
+    "restaurantName": "A really new post",
+    "description": "Here is my post content",
+    "rating": 5,
+    "googleApiRating": 3.5
 }
 
 ###
@@ -28,7 +30,7 @@ Content-Type: application/json
 Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ODEyNTc0NDA2ZjljYzc2MGE4OTYzZCIsImlhdCI6MTczNjUyMDk5NSwiZXhwIjoxNzM2NTI0NTk1fQ.0sLDABs_LX9YKIMWgRMzq1Od4mYDJVhedVZHOYjjaXI
 
 {
-    "content": "new content"
+    "description": "new content"
 }
 
 ###

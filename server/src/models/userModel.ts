@@ -9,6 +9,7 @@ export interface User {
   password?: string;
   refreshTokens: string[];
   isGoogleUser: boolean;
+  profilePictureExtension?: string;
 }
 
 const userSchema = new Schema<User>({
@@ -35,6 +36,10 @@ const userSchema = new Schema<User>({
     type: Boolean,
     default: false,
     required: true,
+  },
+  profilePictureExtension: {
+    type: String,
+    required: false,
   },
 });
 

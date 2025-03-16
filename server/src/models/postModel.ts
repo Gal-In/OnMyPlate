@@ -3,17 +3,33 @@ const { Schema } = mongoose;
 
 export interface Post {
   _id: string;
-  title: string;
-  content?: string;
+  restaurantName: string;
+  description?: string;
   senderId: string;
+  rating: number;
+  googleApiRating: number;
+  photosUrl?: string[];
 }
 
 const postSchema = new Schema<Post>({
-  title: {
+  restaurantName: {
     type: String,
     required: true,
   },
-  content: String,
+  description: String,
+  rating: {
+    required: true,
+    type: Number,
+  },
+  googleApiRating: {
+    required: true,
+    type: Number,
+  },
+  photosUrl: {
+    type: [String],
+    required: false,
+    default: [],
+  },
   senderId: {
     type: String,
     required: true,

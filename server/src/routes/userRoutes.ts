@@ -36,6 +36,12 @@ const router = express.Router();
  *         password:
  *           type: string
  *           description: The user password, saved after encryption
+ *         profilePictureExtension:
+ *           type: string
+ *           description: user profile picture extension
+ *         isGoogleUser:
+ *           type: boolean
+ *           description: is user origin from sign up or google pai
  *         refreshTokens:
  *           type: array
  *           items:
@@ -44,6 +50,8 @@ const router = express.Router();
  *       example:
  *         _id: 67813c84b8f996b54a5e04ca
  *         name: koren
+ *         isGoogleUser: false
+ *         profilePictureExtension: jpg
  *         username: koren23
  *         email: koren@gmail.com
  *         password: $2b$10$OgtMmMCzD3s29LUk6HeyP.Wksi0eAGRYKDvNgBklU476hPDqf45m.
@@ -137,6 +145,8 @@ router.get("/:id", users.getUserById);
  *                          $ref: '#/components/schemas/User'
  *           400:
  *              description: Invalid input
+ *           409:
+ *              description: Username already exist
  *           403:
  *              description: Unauthorized
  *           500:
