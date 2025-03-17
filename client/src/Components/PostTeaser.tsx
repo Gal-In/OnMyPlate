@@ -1,34 +1,20 @@
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Typography,
-} from "@mui/material";
-import React from "react";
+import { Card, CardActions, CardContent, Typography } from "@mui/material";
 import { Post } from "../Types/postTypes";
+import { Favorite, FavoriteBorder } from "@mui/icons-material";
 
 type PostTeaserProps = {
   post: Post;
+  onPostClick: (postId: string) => void;
 };
 
-const PostTeaser = ({ post }: PostTeaserProps) => {
+const PostTeaser = ({ post, onPostClick }: PostTeaserProps) => {
   return (
-    <Card sx={{ cursor: "pointer" }}>
+    <Card sx={{ cursor: "pointer" }} onClick={() => onPostClick(post._id)}>
       <CardContent>
-        <Typography gutterBottom sx={{ color: "text.secondary", fontSize: 14 }}>
-          {post.restaurantName}
-        </Typography>
-        <Typography variant="h5" component="div">
-          something
-        </Typography>
-        <Typography sx={{ color: "text.secondary", mb: 1.5 }}>
-          adjective
-        </Typography>
+        <Typography variant="h5">שם המסעדה: {post.restaurantName}</Typography>
+
         <Typography variant="body2">
-          well meaning and kindly.
-          <br />
-          {'"a benevolent smile"'}
+          פה יופיעו כמות התגובות ואולי גם האם אהבתי את הפוסט
         </Typography>
 
         <img
@@ -36,10 +22,17 @@ const PostTeaser = ({ post }: PostTeaserProps) => {
           src={`${process.env.REACT_APP_SERVER_URL}/media/posts/${
             post.photosUrl ? post.photosUrl[0] : ""
           }`}
+          style={{
+            maxHeight: "100px",
+            maxWidth: "100px",
+          }}
         />
+
+        <Typography variant="body2">{post.description}</Typography>
       </CardContent>
       <CardActions>
-        <Button size="small">Learn More</Button>
+        {/* {post.isLiked && <FavoriteBorder />} */}
+        <Favorite />
       </CardActions>
     </Card>
   );
