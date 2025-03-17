@@ -4,6 +4,7 @@ import commentsRoutes from "./routes/commentsRoutes";
 import usersRoutes from "./routes/userRoutes";
 import authenticationRoutes from "./routes/authenticationRoutes";
 import fileRoutes from "./routes/filesRoutes";
+import likeRoutes from "./routes/likesRoutes";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
@@ -41,6 +42,7 @@ app.use("/posts", postRoutes);
 app.use("/comments", commentsRoutes);
 app.use("/users", usersRoutes);
 app.use("/auth", authenticationRoutes);
+app.use("/like", likeRoutes);
 
 app.use("/file", fileRoutes);
 app.use("/media", express.static("media"));
