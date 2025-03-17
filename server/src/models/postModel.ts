@@ -8,7 +8,7 @@ export interface Post {
   senderId: string;
   rating: number;
   googleApiRating: number;
-  photosUrl?: string[];
+  photosUrl: string[];
 }
 
 const postSchema = new Schema<Post>({
