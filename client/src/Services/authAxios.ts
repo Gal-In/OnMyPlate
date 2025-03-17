@@ -6,50 +6,66 @@ type CustomAxiosConfig = InternalAxiosRequestConfig & {
   isNotFirstRequest?: boolean;
 };
 
-const getAuthorizedAxios = (
-  accessToken: string | null,
-  setAccessToken: React.Dispatch<React.SetStateAction<string | null>>,
-  refreshToken: string,
-  setRefreshToken: (newRefreshToken: string) => void
-) => {
-  const authorizedAxios = axios.create({
-    baseURL: process.env.REACT_APP_SERVER_URL,
-  });
+class AxiosManager {
+  private accessToken: string | null;
+  private refreshToken: string;
+  private setAccessToken;
+  private setRefreshToken;
 
-  authorizedAxios.interceptors.request.use((requestConfig) => {
-    if (accessToken?.length)
-      requestConfig.headers["Authorization"] = `Bearer ${accessToken}`;
+  constructor(
+    accessToken: string | null,
+    refreshToken: string,
+    setAccessToken: React.Dispatch<React.SetStateAction<string | null>>,
+    setRefreshToken: (newToken: string) => void
+  ) {
+    this.accessToken = accessToken;
+    this.refreshToken = refreshToken;
+    this.setAccessToken = setAccessToken;
+    this.setRefreshToken = setRefreshToken;
+  }
 
-    return requestConfig;
-  });
+  getAuthorizedAxios = () => {
+    const authorizedAxios = axios.create({
+      baseURL: process.env.REACT_APP_SERVER_URL,
+    });
 
-  authorizedAxios.interceptors.response.use(
-    (response) => response,
-    async (error: AxiosError) => {
-      const config = error.config as CustomAxiosConfig;
-      if (
-        (error.status === 403 || error.status === 401) &&
-        !config.isNotFirstRequest
-      ) {
-        config.isNotFirstRequest = true;
-        const response = await refreshAccessToken(refreshToken);
+    authorizedAxios.interceptors.request.use((requestConfig) => {
+      if (this.accessToken?.length)
+        requestConfig.headers["Authorization"] = `Bearer ${this.accessToken}`;
 
-        if (response && !axios.isAxiosError(response)) {
-          const tokens = response as UserRequestResponse;
+      return requestConfig;
+    });
 
-          config.headers["Authorization"] = `Bearer ${tokens.accessToken}`;
-          setAccessToken(tokens.accessToken);
-          setRefreshToken(tokens.refreshToken);
+    authorizedAxios.interceptors.response.use(
+      (response) => response,
+      async (error: AxiosError) => {
+        const config = error.config as CustomAxiosConfig;
+        if (
+          (error.status === 403 || error.status === 401) &&
+          !config.isNotFirstRequest
+        ) {
+          config.isNotFirstRequest = true;
+          const response = await refreshAccessToken(this.refreshToken);
 
-          return await axios(config);
+          if (response && !axios.isAxiosError(response)) {
+            const tokens = response as UserRequestResponse;
+
+            config.headers["Authorization"] = `Bearer ${tokens.accessToken}`;
+            this.accessToken = tokens.accessToken;
+            this.refreshToken = tokens.refreshToken;
+            this.setAccessToken(tokens.accessToken);
+            this.setRefreshToken(tokens.refreshToken);
+
+            return await axios(config);
+          }
         }
+
+        return Promise.reject(error);
       }
+    );
 
-      return Promise.reject(error);
-    }
-  );
+    return authorizedAxios;
+  };
+}
 
-  return authorizedAxios;
-};
-
-export default getAuthorizedAxios;
+export default AxiosManager;

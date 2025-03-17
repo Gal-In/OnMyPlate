@@ -1,14 +1,13 @@
 import React, { createContext, useContext, useMemo } from "react";
 import { useUser } from "./useUser";
-import getAuthorizedAxios from "../Services/authAxios";
 import { useCookies } from "react-cookie";
-import { AxiosInstance } from "axios";
+import AxiosManager from "../Services/authAxios";
 
 type AuthApiContextProviderProps = {
   children: React.ReactNode;
 };
 
-const AuthApiContext = createContext<AxiosInstance | null>(null);
+const AuthApiContext = createContext<AxiosManager | null>(null);
 
 export const AuthApiContextProvider = ({
   children,
@@ -18,13 +17,13 @@ export const AuthApiContextProvider = ({
 
   const authAxiosInstance = useMemo(
     () =>
-      getAuthorizedAxios(
+      new AxiosManager(
         accessToken,
-        setAccessToken,
         refreshToken,
+        setAccessToken,
         (newRefreshToken: string) => setCookie("refreshToken", newRefreshToken)
       ),
-    [accessToken, refreshToken, setAccessToken, setCookie]
+    [accessToken, refreshToken]
   );
 
   return (
