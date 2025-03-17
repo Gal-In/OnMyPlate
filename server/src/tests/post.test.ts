@@ -62,7 +62,7 @@ afterAll((done) => {
 
 describe("Test Posts API", () => {
   test("Get all posts before adding", async () => {
-    const allPosts = await request(app).get("/posts");
+    const allPosts = await request(app).get("/posts/0/100");
 
     expect(allPosts.statusCode).toEqual(200);
     expect(allPosts.body.length).toEqual(0);
@@ -89,7 +89,7 @@ describe("Test Posts API", () => {
   });
 
   test("Get all posts after add single post", async () => {
-    const allPosts = await request(app).get("/posts");
+    const allPosts = await request(app).get("/posts/0/100");
 
     expect(allPosts.statusCode).toEqual(200);
     expect(allPosts.body.length).toEqual(1);
