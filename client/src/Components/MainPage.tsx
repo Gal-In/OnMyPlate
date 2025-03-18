@@ -69,6 +69,12 @@ const MainPage = () => {
     }
   };
 
+  const onPostClick = (postId: string) => {
+    const clickedPost = posts.find(({ _id }) => postId === _id);
+    if (clickedPost) {
+    }
+  };
+
   return (
     <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
       {isAddingPost ? (
@@ -106,7 +112,7 @@ const MainPage = () => {
               <Grid container spacing={8}>
                 {filteredPosts.map((post, i) => (
                   <Grid size={4} key={post._id}>
-                    <PostTeaser post={post} />
+                    <PostTeaser post={post} onPostClick={onPostClick} />
                   </Grid>
                 ))}
               </Grid>
