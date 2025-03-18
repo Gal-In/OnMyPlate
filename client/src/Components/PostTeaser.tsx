@@ -19,9 +19,7 @@ const PostTeaser = ({ post, onPostClick }: PostTeaserProps) => {
 
         <img
           alt="post"
-          src={`${process.env.REACT_APP_SERVER_URL}/media/posts/${
-            post.photosUrl ? post.photosUrl[0] : ""
-          }`}
+          src={`${process.env.REACT_APP_SERVER_URL}/media/posts/${post.photosUrl[0]}`}
           style={{
             maxHeight: "100px",
             maxWidth: "100px",

@@ -13,9 +13,14 @@ Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ODIzNDAzOTFj
 
 ###
 
-GET http://localhost:8000/posts
+GET http://localhost:8000/posts/1/1
 
 ###
+
+GET http://localhost:8000/posts/amount
+
+###
+
 
 GET http://localhost:8000/posts/6766ae86b634082a42ed607d
 

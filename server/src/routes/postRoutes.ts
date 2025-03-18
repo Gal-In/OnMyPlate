@@ -106,15 +106,28 @@ router.post("/", authenticationController.authenticate, post.addNewPost);
 
 /**
  * @swagger
- * /posts:
+ * /posts/{skip}/{limit}:
  *   get:
- *      summary: Get all existing posts
- *      description: Retrives an array of all saved posts
+ *      summary: Get all existing posts by skip and limit
+ *      description: Retrives an array of all saved posts using the role of the skip and limit
  *      tags:
  *          - Posts
+ *      parameters:
+ *          - in: path
+ *            name: skip
+ *            required: true
+ *            schema:
+ *              type: integer
+ *            description: Amount of posts to skip
+ *          - in: path
+ *            name: limit
+ *            required: true
+ *            schema:
+ *              type: integer
+ *            description: Amount of posts to limit
  *      responses:
  *          200:
- *              description: Array of all saved posts
+ *              description: Array of saved posts using the role of the skip and limit
  *              content:
  *                  application/json:
  *                      schema:
@@ -126,6 +139,29 @@ router.post("/", authenticationController.authenticate, post.addNewPost);
  */
 router.get("/:skip/:limit", post.getPosts);
 
+/**
+ * @swagger
+ * /posts/amount:
+ *   get:
+ *      summary: Get posts amount
+ *      description: Retrives amount of saved posts
+ *      tags:
+ *          - Posts
+ *      responses:
+ *          200:
+ *              description: Amount of saved posts
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              amount:
+ *                                  type: integer
+ *                                  description: Amount of saved posts
+ *                                  example: 12
+ *          500:
+ *              description: Server Error
+ */
 router.get("/amount", post.getAmountOfPosts);
 
 /**
