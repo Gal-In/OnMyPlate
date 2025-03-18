@@ -112,8 +112,8 @@ POST http://localhost:8000/auth/login
 Content-Type: application/json
 
 {
-    "username": "tom",
-    "password": "12345"
+    "username": "abc123",
+    "password": "abc123"
 }
 
 ###
@@ -139,4 +139,29 @@ Content-Type: application/json
 
 ###
 
+POST http://localhost:8000/like
+Content-Type: application/json
+Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3Y2YyYWE2ZDk4NDAwYTlhMmI5M2NjMyIsImlhdCI6MTc0MjI0MDU2MCwiZXhwIjoxNzQyMjc2NTYwfQ.AlF_hn9MyzMw0ExQJPbqaiBU-3YK_aGWdk9bcn_NNvk
 
+{
+    "postId": "67d1999c1e6845c8a02188cc"
+}
+
+###
+
+
+DELETE  http://localhost:8000/like
+Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3Y2YyYWE2ZDk4NDAwYTlhMmI5M2NjMyIsImlhdCI6MTc0MjI0MDU2MCwiZXhwIjoxNzQyMjc2NTYwfQ.AlF_hn9MyzMw0ExQJPbqaiBU-3YK_aGWdk9bcn_NNvk
+Content-Type: application/json
+
+{
+    "postId": "67d1999c1e6845c8a02188cc"
+}
+
+###
+
+
+GET http://localhost:8000/like/67d1999c1e6845c8a02188cc
+
+
+###
