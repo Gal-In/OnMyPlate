@@ -22,7 +22,8 @@ const encryptPassword = async (password: string) => {
 
 const generateTokens = (user: User) => {
   const userId = user._id.toString();
-
+  console.log(process.env.ACCESS_TOKEN_SECRET, process.env.REFRESH_TOKEN_EXPIRATION);
+  
   const accessToken = jwt.sign(
     { id: userId },
     process.env.ACCESS_TOKEN_SECRET as string,
@@ -66,6 +67,7 @@ const authenticate = async (
 
 const login = async (req: Request, res: Response) => {
   const { username, password } = req.body;
+  console.log(process.env.ACCESS_TOKEN_SECRET, process.env.REFRESH_TOKEN_EXPIRATION);
 
   const currUser = await userModel.findOne({ username });
   if (currUser) {
@@ -73,6 +75,7 @@ const login = async (req: Request, res: Response) => {
       password,
       currUser.password!
     );
+    console.log(process.env.ACCESS_TOKEN_SECRET, process.env.REFRESH_TOKEN_EXPIRATION, "2");
 
     if (isPasswordCorrect) {
       const tokens = generateTokens(currUser);

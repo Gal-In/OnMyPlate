@@ -4,10 +4,11 @@ import AddPostPage from "./AddPostPage";
 import { useUser } from "../Context/useUser";
 import SignUpPage from "./SignPage/SignUpPage";
 import { Post } from "../Types/postTypes";
-import { Box } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import PostTeaser from "./PostTeaser";
 import { getPagedPosts, getPostCount } from "../Services/serverRequests";
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
 const MainPage = () => {
@@ -16,6 +17,19 @@ const MainPage = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [maxAmount, setMaxAmount] = useState<number>(0);
   const [isFetchingPosts, setIsFetchingPosts] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredPosts = posts.filter(post => post.restaurantName.toLowerCase().includes(searchTerm.toLowerCase()));
+  
+  const navigate = useNavigate();
+
+  const handleCardClick = (id: string) => {
+    navigate(`/restaurant/${id}`);
+  };
 
   const { user } = useUser();
 
@@ -75,9 +89,22 @@ const MainPage = () => {
             }}
             onScroll={handleScroll}
           >
+            <TextField
+              sx={{
+                border: "1px solid white",
+                //   outline: 0,
+                borderRadius: "5px",
+                height: "13vh",
+                width: "30vw",
+                position: "relative",
+              }}
+              value={searchTerm} 
+              onChange={handleSearchChange} 
+              placeholder="חיפוש"
+            />
             <Box sx={{ flexGrow: 1 }}>
               <Grid container spacing={8}>
-                {posts.map((post, i) => (
+                {filteredPosts.map((post, i) => (
                   <Grid size={4} key={post._id}>
                     <PostTeaser post={post} />
                   </Grid>

@@ -76,17 +76,6 @@ const ApplicationBar = ({
         >
           On My Plate
         </Typography>
-        <TextField
-          sx={{
-            border: "1px solid white",
-            //   outline: 0,
-            borderRadius: "5px",
-            position: "relative",
-
-            height: "50%",
-          }}
-          placeholder="חיפוש"
-        />
       </Toolbar>
     </AppBar>
   );

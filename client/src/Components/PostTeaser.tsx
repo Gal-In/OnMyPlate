@@ -7,6 +7,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { Post } from "../Types/postTypes";
+import PostPage from "./PostPage/PostPage";
 
 type PostTeaserProps = {
   post: Post;
@@ -16,29 +17,20 @@ const PostTeaser = ({ post }: PostTeaserProps) => {
   return (
     <Card sx={{ cursor: "pointer" }}>
       <CardContent>
-        <Typography gutterBottom sx={{ color: "text.secondary", fontSize: 14 }}>
+        <Typography variant="h5" component="div" >
           {post.restaurantName}
         </Typography>
-        <Typography variant="h5" component="div">
-          something
-        </Typography>
-        <Typography sx={{ color: "text.secondary", mb: 1.5 }}>
-          adjective
-        </Typography>
-        <Typography variant="body2">
-          well meaning and kindly.
-          <br />
-          {'"a benevolent smile"'}
+        <Typography gutterBottom sx={{ color: "text.secondary", fontSize: 14 }}>
+          {post.description}
         </Typography>
 
-        <img
-          alt="post"
-          src={`${process.env.REACT_APP_SERVER_URL}/media/posts/${post.photosUrl[0]}`}
-        />
+        <div style={{ height: '20vh', width: '20vh' }} onClick={() => <PostPage/>}>
+          <img
+            alt="post"
+            src={`${process.env.REACT_APP_SERVER_URL}/media/posts/${post.photosUrl[0]}`}
+          />
+        </div>
       </CardContent>
-      <CardActions>
-        <Button size="small">Learn More</Button>
-      </CardActions>
     </Card>
   );
 };
