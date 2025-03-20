@@ -72,6 +72,7 @@ const MainPage = () => {
   const onPostClick = (postId: string) => {
     const clickedPost = posts.find(({ _id }) => postId === _id);
     if (clickedPost) {
+      navigate(`/restaurant/${clickedPost._id}`);
     }
   };
 

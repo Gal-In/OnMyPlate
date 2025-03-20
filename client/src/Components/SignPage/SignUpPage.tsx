@@ -25,6 +25,7 @@ import SignInPgae from "./SignInPage";
 import { User, UserRequestResponse } from "../../Types/userTypes";
 import { Close, Edit } from "@mui/icons-material";
 import { useAuthenticatedServerRequest } from "../../Services/useAuthenticatedServerRequest";
+import { useNavigate } from "react-router-dom";
 
 type SignUpPageProps = {
   user?: User | null;
@@ -48,7 +49,7 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
 
   const { setUser, setAccessToken } = useUser();
   const { updateUser } = useAuthenticatedServerRequest();
-
+  const navigate = useNavigate();
   const googleLogin = useGoogleLogin({
     onSuccess: (credentials) => handleGoogleLogin(credentials.access_token),
   });
@@ -63,6 +64,7 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
     } else {
       const userInfo = response as UserRequestResponse;
       setUser({
+        _id: "",
         username: userInfo.username,
         email: userInfo.email,
         name: userInfo.name,
@@ -91,6 +93,7 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
     const profilePictureExtension = imageFile?.type;
 
     const response = await saveNewUser({
+      _id: "",
       username,
       email,
       password,
@@ -117,6 +120,7 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
       const userInfo = response as UserRequestResponse;
 
       setUser({
+        _id: "",
         username,
         email,
         name,
@@ -125,6 +129,7 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
       });
 
       setAccessToken(userInfo.accessToken);
+      navigate("/main")
     }
   };
 
@@ -387,7 +392,7 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
             <Button
               sx={{ textAlign: "center" }}
               variant="outlined"
-              onClick={() => setIsSignUp(false)}
+              onClick={() => navigate("/signin")}
             >
               כניסה למערכת
             </Button>
@@ -418,9 +423,9 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
     </SignPageWrapper>
   ) : (
     <SignInPgae
-      requestErrorMessage={requestErrorMessage}
-      setRequestErrorMessage={setRequestErrorMessage}
-      onSwitchPage={() => setIsSignUp(true)}
+      // requestErrorMessage={requestErrorMessage}
+      // setRequestErrorMessage={setRequestErrorMessage}
+      // onSwitchPage={() => setIsSignUp(true)}
     />
   );
 };

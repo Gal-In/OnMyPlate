@@ -1,7 +1,10 @@
 import { Card, CardActions, CardContent, Typography } from "@mui/material";
 import { Post } from "../Types/postTypes";
-import PostPage from "./PostPage/PostPage";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
+import { useEffect, useState } from "react";
+import { addLike, deleteLike, getIsLikedByUser, getLikeAmount } from "../Services/serverRequests";
+import axios from "axios";
+import { useUser } from "../Context/useUser";
 
 type PostTeaserProps = {
   post: Post;
@@ -9,13 +12,44 @@ type PostTeaserProps = {
 };
 
 const PostTeaser = ({ post, onPostClick }: PostTeaserProps) => {
+  const [likesCount, setLikesCount] = useState(0);
+  const [isLiked, setIsLiked] = useState(false);
+  const { user } = useUser();
+
+  useEffect(() => {
+    const getLikes = async () => {
+      const response = await getLikeAmount(post._id);
+      if (!axios.isAxiosError(response))
+        setLikesCount((response as number));
+    }
+
+    getLikes();
+  }, []);
+
+  useEffect(() => {
+    const getIsLiked = async() => {
+      if (user?._id) {
+        const response = await getIsLikedByUser(post._id, user?._id)
+        if (!axios.isAxiosError(response))
+          setIsLiked((response as boolean));
+      }
+    }
+
+    getIsLiked();
+  }, []);
+
+  const toggleLike = () => {
+    if(user)
+    isLiked ? deleteLike(post._id, user?._id) : addLike(post._id, user?._id)
+  }
+
   return (
-    <Card sx={{ cursor: "pointer" }} onClick={() => onPostClick(post._id)}>
-      <CardContent>
+    <Card sx={{ cursor: "pointer" }} >
+      <CardContent onClick={() => onPostClick(post._id)}>
         <Typography variant="h5">שם המסעדה: {post.restaurantName}</Typography>
 
         <Typography variant="body2">
-          פה יופיעו כמות התגובות ואולי גם האם אהבתי את הפוסט
+          {`${likesCount} לייקים`}
         </Typography>
 
         <img
@@ -29,9 +63,8 @@ const PostTeaser = ({ post, onPostClick }: PostTeaserProps) => {
 
         <Typography variant="body2">{post.description}</Typography>
       </CardContent>
-      <CardActions>
-        {/* {post.isLiked && <FavoriteBorder />} */}
-        <Favorite />
+      <CardActions onClick={() => toggleLike()}>
+        {isLiked ?  <Favorite /> : <FavoriteBorder /> }
       </CardActions>
     </Card>
   );

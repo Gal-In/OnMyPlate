@@ -1,6 +1,8 @@
 import axios from "axios";
-import { DbUser, UserRequestResponse } from "../Types/userTypes";
+import { DbUser, User, UserRequestResponse } from "../Types/userTypes";
 import { Post } from "../Types/postTypes";
+import { Comment } from "../Types/commentTypes";
+import { Like } from "../Types/likeTypes";
 
 export type GoogleMapApiRes = {
   formatted_address: string;
@@ -179,6 +181,105 @@ const getPagedPosts = async (skip: number, limit: number): Promise<Post[]> => {
   }
 };
 
+const getPostById = async (id: string) => {
+  try {
+    const { data } = await axios.get<Post>(
+      process.env.REACT_APP_SERVER_URL + `/posts/${id}`
+    );
+
+    return data;
+  } catch (error: unknown) {
+    return error;
+  }
+};
+
+const getCommentsById = async (postId: string) => {
+  try {
+    const { data } = await axios.get<Comment[]>(
+      process.env.REACT_APP_SERVER_URL + `/comments/${postId}`
+    );
+
+    return data;
+  } catch (error: unknown) {
+    return error;
+  }
+}
+
+const getUserById = async (senderId: string) => {
+  try {
+    const { data } = await axios.get<User>(
+      process.env.REACT_APP_SERVER_URL + `/users/${senderId}`
+    );
+
+    return data;
+  } catch (error: unknown) {
+    return error;
+  }
+}
+
+const addNewComment = async (comment: Comment) => {
+  try {
+    const { data } = await axios.post(
+      process.env.REACT_APP_SERVER_URL + "/comment/",
+      comment
+    );
+
+    return data;
+  } catch (error) {
+    return error;
+  }
+};
+
+const getLikeAmount = async (postId: string) => {
+  try {
+    const { data } = await axios.get<number>(
+      process.env.REACT_APP_SERVER_URL + `/like/${postId}`
+    );
+
+    return data;
+  } catch (error: unknown) {
+    return error;
+  }
+}
+
+const addLike = async (postId: string, userId: string) => {
+  try {
+    const { data } = await axios.post(
+      process.env.REACT_APP_SERVER_URL + `/like/${userId}`,
+      postId
+    );
+
+    return data;
+  } catch (error) {
+    return error;
+  }
+}
+
+const deleteLike = async (postId: string, userId: string) => {
+  try {
+    const { data } = await axios.delete(
+      process.env.REACT_APP_SERVER_URL + `/like/${userId}`,{
+      data:{postId}}
+    );
+
+    return data;
+  } catch (error) {
+    return error;
+  }
+}
+
+const getIsLikedByUser = async (postId: string, userId: string) => {
+  try {
+    const { data } = await axios.get<boolean>(
+      process.env.REACT_APP_SERVER_URL + `/like/${userId}/${postId}`
+    );
+
+    return data;
+  } catch (error: unknown) {
+    return error;
+  }
+}
+
 export {
   saveNewUser,
   verifyUser,
@@ -191,4 +292,12 @@ export {
   generatePostDescription,
   getPostCount,
   getPagedPosts,
+  getPostById,
+  getCommentsById,
+  addNewComment,
+  getUserById,
+  getLikeAmount,
+  addLike,
+  deleteLike,
+  getIsLikedByUser
 };

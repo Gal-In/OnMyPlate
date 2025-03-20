@@ -75,7 +75,7 @@ const router = express.Router();
  *          500:
  *              description: Server Error
  */
-router.post("/", authenticationController.authenticate, like.addLike);
+router.post("/:userId", authenticationController.authenticate, like.addLike);
 
 /**
  * @swagger
@@ -114,7 +114,7 @@ router.post("/", authenticationController.authenticate, like.addLike);
  *          500:
  *              description: Server Error
  */
-router.delete("/", authenticationController.authenticate, like.removeLike);
+router.delete("/:userId", authenticationController.authenticate, like.removeLike);
 
 /**
  * @swagger
@@ -144,5 +144,34 @@ router.delete("/", authenticationController.authenticate, like.removeLike);
  *              description: Server Error
  */
 router.get("/:postId", like.getAmountOfLikesOnPost);
+
+/**
+ * @swagger
+ * /like/{postId}:
+ *   get:
+ *      summary: Get is post liked by user
+ *      description: Retrieves a specific post if its liked by user
+ *      tags:
+ *          - Likes
+ *      parameters:
+ *          - in: path
+ *            name: postId
+ *            schema:
+ *              type: string
+ *            required: true
+ *            description: The id of the post whose likes we are counting
+ *      responses:
+ *           200:
+ *              description: Single Post
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/Like'
+ *           400:
+ *              description: Invalid input
+ *           500:
+ *              description: Server Error
+ */
+router.get("/:userId/:postId", like.getIsLiked);
 
 export default router;

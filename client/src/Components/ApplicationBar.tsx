@@ -3,10 +3,11 @@ import {
   Toolbar,
   IconButton,
   Typography,
-  TextField,
   Tooltip,
   Avatar,
   Button,
+  createTheme,
+  ThemeProvider,
 } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useUser } from "../Context/useUser";
@@ -19,6 +20,15 @@ type ApplicationBarProps = {
   setIsAddingPost: React.Dispatch<React.SetStateAction<boolean>>;
   setIsEditingProfile: React.Dispatch<React.SetStateAction<boolean>>;
 };
+
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#5c5b5c',
+    },
+  },
+});
 
 const ApplicationBar = ({
   setIsAddingPost,
@@ -44,40 +54,44 @@ const ApplicationBar = ({
   );
 
   return (
-    <AppBar position="sticky" dir="rtl">
-      <Toolbar>
-        <Tooltip title={"התנתק"}>
-          <IconButton sx={{ p: 1 }} onClick={logout}>
-            <LogoutIcon />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title={"ערוך פרופיל"}>
-          <IconButton sx={{ p: 1 }} onClick={() => setIsEditingProfile(true)}>
-            <Avatar
-              src={imageUrl}
-              sx={{
-                "& img": { objectFit: "fill" },
-              }}
-            />
-          </IconButton>
-        </Tooltip>
-        <Button
-          variant="contained"
-          startIcon={<Add />}
-          onClick={() => setIsAddingPost(true)}
-        >
-          הוסף פוסט
-        </Button>
-        <Typography
-          variant="h6"
-          noWrap
-          component="div"
-          sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
-        >
-          On My Plate
-        </Typography>
-      </Toolbar>
-    </AppBar>
+    <ThemeProvider theme={darkTheme}>
+      <AppBar position="sticky" dir="rtl">
+        <Toolbar>
+          <Tooltip title={"התנתק"}>
+            <IconButton sx={{ p: 1 }} onClick={logout}>
+              <LogoutIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title={"ערוך פרופיל"}>
+            <IconButton sx={{ p: 1 }} onClick={() => setIsEditingProfile(true)}>
+              <Avatar
+                src={imageUrl}
+                sx={{
+                  "& img": { objectFit: "fill" },
+                }}
+              />
+            </IconButton>
+          </Tooltip>
+          <Button
+            variant="contained"
+            style={{ marginRight: "10vh", backgroundColor: "darkviolet" }}
+            startIcon={<Add />}
+            onClick={() => setIsAddingPost(true)}
+          >
+            הוסף פוסט
+          </Button>
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            style={{marginRight: "50vh"}}
+            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+          >
+            On My Plate
+          </Typography>
+        </Toolbar>
+      </AppBar>
+     </ThemeProvider>
   );
 };
 
