@@ -77,7 +77,7 @@ const PostTeaser = ({ post, onPostClick, isEditable, setIsAddingPost, setIsNewPo
   }
 
   return (
-    <Card sx={{ direction: 'rtl', height: "38vh", width: "25vw", cursor: "pointer", display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }} >
+    <Card sx={{ direction: 'rtl', height: "40vh", width: "25vw", cursor: "pointer", display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }} >
       <CardContent>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>

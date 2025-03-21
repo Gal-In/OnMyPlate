@@ -287,4 +287,43 @@ router.get("/:id", post.getPostById);
 
 router.put("/:id", authenticationController.authenticate, post.updatePost);
 
+/**
+ * @swagger
+ * /posts:
+ *   delete:
+ *      summary: Remove post
+ *      description: Delete existing post
+ *      tags:
+ *          - Posts
+ *      security:
+ *          - bearerAuth: []
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          postId:
+ *                              type: string
+ *                              description: The id of the post that is being removed
+ *                              example: 67cf2aa6d98400a9a2b93cc3
+ *                      required:
+ *                        - postId
+ *      responses:
+ *          200:
+ *              description: Post removed
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/Post'
+ *          400:
+ *              description: Invalid input
+ *          403:
+ *              descriptiom: Unauthorized
+ *          500:
+ *              description: Server Error
+ */
+router.delete("/:id", authenticationController.authenticate, post.removePost);
+
 export default router;

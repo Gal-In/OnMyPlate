@@ -23,7 +23,6 @@ export const useAuthenticatedServerRequest = () => {
     try {
       const { data } = await axios
         .getAuthorizedAxios()
-
         .put<Post>(`/posts/${postId}`, newPostData);
 
       return data;
@@ -96,5 +95,18 @@ const addNewComment = async (comment: Comment) => {
   }
 };
 
-  return { addNewPost, updatePost, updateUser, addLike, deleteLike, getIsLikedByUser, addNewComment};
+const deletePost = async (postId: string) => {
+  try {
+    const { data } = await axios.getAuthorizedAxios().delete(
+      process.env.REACT_APP_SERVER_URL + `/posts/${postId}`,{
+      data:{postId}}
+    );
+
+    return data;
+  } catch (error) {
+    return error;
+  }
+}
+
+  return { addNewPost, updatePost, updateUser, addLike, deleteLike, getIsLikedByUser, addNewComment, deletePost};
 };
