@@ -172,6 +172,6 @@ router.get("/:postId", like.getAmountOfLikesOnPost);
  *           500:
  *              description: Server Error
  */
-router.get("/status/:postId", like.getIsLiked);
+router.get("/status/:postId", authenticationController.authenticate, like.getIsLiked);
 
 export default router;

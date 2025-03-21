@@ -50,7 +50,6 @@ const getAmountOfLikesOnPost = async (req: Request, res: Response) => {
 const getIsLiked = async (req: Request, res: Response) => {
   const postId = req.params.postId;
   const userId = req.params.userId;
-console.log(userId);
 
   try {
     const like = await likeModel.findOne({ postId, userId });

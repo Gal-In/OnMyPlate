@@ -217,23 +217,22 @@ const getUserById = async (senderId: string) => {
   }
 }
 
-const addNewComment = async (comment: Comment) => {
-  try {
-    const { data } = await axios.post(
-      process.env.REACT_APP_SERVER_URL + "/comment/",
-      comment
-    );
-
-    return data;
-  } catch (error) {
-    return error;
-  }
-};
-
 const getLikeAmount = async (postId: string) => {
   try {
     const { data } = await axios.get<{amount: number}>(
       process.env.REACT_APP_SERVER_URL + `/like/${postId}`
+    );
+
+    return data.amount;
+  } catch (error: unknown) {
+    return error;
+  }
+}
+
+const getCommentsAmount = async (postId: string) => {
+  try {
+    const { data } = await axios.get<{amount: number}>(
+      process.env.REACT_APP_SERVER_URL + `/comments/${postId}`
     );
 
     return data.amount;
@@ -256,7 +255,6 @@ export {
   getPagedPosts,
   getPostById,
   getCommentsById,
-  addNewComment,
   getUserById,
   getLikeAmount,
 };

@@ -23,7 +23,8 @@ const ImagesList = ({
   maxImagesToAdd = 5,
 }: ImagesListProps) => {
   const [currImageIndex, setCurrImageIndex] = useState<number>(0);
-
+  console.log(imagesUrl, currImageIndex);
+  
   const handleCapture = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const target = event.target;
     const file = target.files?.[0];
@@ -77,7 +78,7 @@ const ImagesList = ({
             <Box
               sx={{
                 width: "100%",
-                height: "20vh",
+                height: "100%",
                 padding: "10px",
               }}
             >

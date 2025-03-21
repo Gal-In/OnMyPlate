@@ -5,6 +5,8 @@ import axios from "axios";
 import { Post } from "../../Types/postTypes";
 import { Comment } from "../../Types/commentTypes";
 import CommentBox from "./CommentSection";
+import { Height } from "@mui/icons-material";
+import ImagesList from "../ImagesList";
 // type RestaurantSelectionDialogProps = {
 //     options: GoogleMapApiRes[];
 //     handleSelect: (selectedOption: GoogleMapApiRes) => void;
@@ -14,7 +16,13 @@ const PostPage = () => {
     const { id } = useParams();
     const [restaurant, setRestaurant] = useState<Post>();
     const [comments, setComments] = useState<Comment[]>([]);
+    const [ErrorMessage, setErrorMessage] = useState("");
+    const [imagesList, setImagesList] = useState(restaurant?.photosUrl.map(url => `${process.env.REACT_APP_SERVER_URL}/media/posts/${url}`) ?? [])
 
+    useEffect(() => {
+        if(restaurant)
+        setImagesList(restaurant.photosUrl.map(url => `${process.env.REACT_APP_SERVER_URL}/media/posts/${url}`));
+    }, restaurant?.photosUrl)
     useEffect(() => {
         const getRestaurant = async () => {
             if (id) {
@@ -40,22 +48,28 @@ const PostPage = () => {
     }, [restaurant])
 
     return (
-        <div style={styles.container}>
+        <div style={{ padding: '20px', width: '90vw' }}>
             {restaurant ?
                 <div style={styles.content}>
                     <div style={styles.imageContainer}>
-                        <img
-                            src={`${process.env.REACT_APP_SERVER_URL}/media/posts/${restaurant.photosUrl[0]}`}
-                            alt="post"
-                            style={styles.image}
+                        <ImagesList
+                            isAbleToAdd={false}
+                            imagesUrl={imagesList}
+                            setImagesUrl={setImagesList}
+                            setErrorMessage={setErrorMessage}
+                        // src={`${process.env.REACT_APP_SERVER_URL}/media/posts/${restaurant.photosUrl[0]}`}
+                        // alt="post"
+                        // style={{width: '60vw',
+                        //     height: '90vh',
+                        //     borderRadius: '8px',}}
                         />
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                         <h1>{restaurant.restaurantName}</h1>
                         <p>{restaurant.description}</p>
 
                         <h2>תגובות</h2>
-                        <CommentBox comments={comments} post={restaurant}/>
+                        <CommentBox comments={comments} post={restaurant} />
                     </div>
                 </div>
                 : <div> מסעדה לא נמצאה </div>}
@@ -83,7 +97,8 @@ const styles = {
         flex: '1',
     },
     image: {
-        width: '100%',
+        width: '70vw',
+        Height: '50vh',
         borderRadius: '8px',
     },
     detailsContainer: {

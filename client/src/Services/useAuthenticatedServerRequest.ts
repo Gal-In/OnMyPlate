@@ -3,7 +3,7 @@ import { useAuthApi } from "../Context/useAuthApi";
 import { Like } from "../Types/likeTypes";
 import { Post, PostToCreate } from "../Types/postTypes";
 import { User } from "../Types/userTypes";
-
+import { Comment } from "../Types/commentTypes";
 export const useAuthenticatedServerRequest = () => {
   const axios = useAuthApi();
 
@@ -83,6 +83,18 @@ const getIsLikedByUser = async (postId: string) => {
     return error;
   }
 }
+const addNewComment = async (comment: Comment) => {
+  try {
+    const { data } = await axios.getAuthorizedAxios().post(
+      process.env.REACT_APP_SERVER_URL + "/comments",
+      comment
+    );
 
-  return { addNewPost, updatePost, updateUser, addLike, deleteLike, getIsLikedByUser};
+    return data;
+  } catch (error) {
+    return error;
+  }
+};
+
+  return { addNewPost, updatePost, updateUser, addLike, deleteLike, getIsLikedByUser, addNewComment};
 };

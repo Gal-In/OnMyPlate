@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Box,
     TextField,
@@ -12,9 +12,11 @@ import {
 import { useUser } from '../../Context/useUser';
 import { Post } from '../../Types/postTypes';
 import { Comment } from '../../Types/commentTypes';
-import { addNewComment, getUserById } from '../../Services/serverRequests';
+import { getUserById } from '../../Services/serverRequests';
 import axios from 'axios';
 import { User } from '../../Types/userTypes';
+import { useAuthenticatedServerRequest } from '../../Services/useAuthenticatedServerRequest';
+import SingleComment from './SingleComment';
 
 type CommentsSectionProps = {
     post: Post;
@@ -23,33 +25,25 @@ type CommentsSectionProps = {
 
 const CommentBox = ({ post, comments }: CommentsSectionProps) => {
     const [comment, setComment] = useState("");
-    const { user } = useUser();
-    const [commentUser, setCommentUser] = useState(user);
     const [newComments, setNewComments] = useState(comments);
+    const { addNewComment } = useAuthenticatedServerRequest();
 
-    const getUser = async (senderId: string) => {
-        const response = await getUserById(senderId);
-        if (!axios.isAxiosError(response))
-            setCommentUser(response as User);
-    }
-    
+    useEffect(() => {
+        setNewComments(comments);
+    },[])
+
     const handleAddComment = async () => {
         if (!comment.trim()) return;
-        if (user) {
-            const newComment: Comment = {
-                _id: "",
-                message: comment.trim(),
-                senderId: user._id,
-                postId: post._id,
-            }
-            const response = await addNewComment(newComment);
-            if (axios.isAxiosError(response)) {
-                    // setErrorMessage("חלה תקלה בשמירת תגובה");
-                    return;
-                  }
-            setNewComments([newComment, ...comments]);
-            setComment('');
-        };
+        const newComment: Comment = {
+            message: comment.trim(),
+            postId: post._id,
+        }
+        const response = await addNewComment(newComment);
+        if (axios.isAxiosError(response)) {
+            return;
+        }
+        setNewComments([newComment, ...comments]);
+        setComment('');
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,14 +80,8 @@ const CommentBox = ({ post, comments }: CommentsSectionProps) => {
                 </Button>
             </Stack>
             <Box>
-                {newComments.map((comment: Comment) => (
-                    <Card key={comment._id} variant="outlined" sx={{ mb: 2 }}>
-                        <CardHeader
-                            avatar={<Avatar src={commentUser?.profilePictureExtension} alt={user?.name} />}
-                            title={<Typography variant="subtitle1">{commentUser?.username}</Typography>}
-                            subheader={<Typography variant="body2">{comment.message}</Typography>}
-                        />
-                    </Card>
+                {(newComments.length ? newComments : comments).map((comment: Comment) => (
+                    <SingleComment comment={comment} key={comment._id}/>
                 ))}
 
                 {!newComments.length && (

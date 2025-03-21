@@ -2,7 +2,7 @@ import { Card, CardActions, CardContent, Typography } from "@mui/material";
 import { Post } from "../Types/postTypes";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import { useEffect, useState } from "react";
-import { getLikeAmount } from "../Services/serverRequests";
+import { getCommentsById, getLikeAmount } from "../Services/serverRequests";
 import axios from "axios";
 import { useUser } from "../Context/useUser";
 import { useAuthenticatedServerRequest } from "../Services/useAuthenticatedServerRequest";
@@ -16,6 +16,7 @@ const PostTeaser = ({ post, onPostClick }: PostTeaserProps) => {
   const [likesCount, setLikesCount] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const { addLike, deleteLike, getIsLikedByUser } = useAuthenticatedServerRequest();
+  const [commentsCount, setCommentsCount] = useState(0);
 
   useEffect(() => {
     const getLikes = async () => {
@@ -28,10 +29,22 @@ const PostTeaser = ({ post, onPostClick }: PostTeaserProps) => {
   }, []);
 
   useEffect(() => {
-    const getIsLiked = async() => {
-        const response = await getIsLikedByUser(post._id)
+    const getComments = async () => {
+      if (post?._id) {
+        const response = await getCommentsById(post._id);
         if (!axios.isAxiosError(response))
-          setIsLiked((response as boolean));
+          setCommentsCount((response as Comment[]).length)
+      }
+    };
+
+    getComments();
+  }, [post])
+
+  useEffect(() => {
+    const getIsLiked = async () => {
+      const response = await getIsLikedByUser(post._id)
+      if (!axios.isAxiosError(response))
+        setIsLiked((response as boolean));
     }
 
     getIsLiked();
@@ -53,12 +66,12 @@ const PostTeaser = ({ post, onPostClick }: PostTeaserProps) => {
   }
 
   return (
-    <Card sx={{ cursor: "pointer" }} >
+    <Card sx={{ cursor: "pointer", display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }} >
       <CardContent onClick={() => onPostClick(post._id)}>
         <Typography variant="h5">שם המסעדה: {post.restaurantName}</Typography>
 
         <Typography variant="body2">
-          {`${likesCount} לייקים`}
+          {`${likesCount} תגובות  ${commentsCount} לייקים`}
         </Typography>
 
         <img
@@ -73,7 +86,7 @@ const PostTeaser = ({ post, onPostClick }: PostTeaserProps) => {
         <Typography variant="body2">{post.description}</Typography>
       </CardContent>
       <CardActions onClick={() => toggleLike()}>
-        {isLiked ?  <Favorite /> : <FavoriteBorder /> }
+        {isLiked ? <Favorite /> : <FavoriteBorder />}
       </CardActions>
     </Card>
   );
