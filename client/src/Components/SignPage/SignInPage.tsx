@@ -12,26 +12,19 @@ import { Box } from "@mui/system";
 import { useUser } from "../../Context/useUser";
 import { verifyUser } from "../../Services/serverRequests";
 import axios from "axios";
-import { useCookies } from "react-cookie";
 import { UserRequestResponse } from "../../Types/userTypes";
+import { useNavigate } from "react-router-dom";
+import { useAuthApi } from "../../Context/useAuthApi";
 
-type SignInPageProps = {
-  onSwitchPage: () => void;
-  requestErrorMessage: string;
-  setRequestErrorMessage: React.Dispatch<React.SetStateAction<string>>;
-};
-
-const SignInPgae = ({
-  onSwitchPage,
-  requestErrorMessage,
-  setRequestErrorMessage,
-}: SignInPageProps) => {
+const SignInPgae = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [fieldsError, setFieldsError] = useState<Record<string, string>>({});
+  const [requestErrorMessage, setRequestErrorMessage] = useState<string>("");
 
-  const [_, setCookie] = useCookies(["refreshToken"]);
-  const { setUser, setAccessToken } = useUser();
+  const { setUser } = useUser();
+  const navigate = useNavigate();
+  const authManager = useAuthApi();
 
   const handleSubmit = async () => {
     if (!validateInputs()) {
@@ -44,15 +37,19 @@ const SignInPgae = ({
 
       const userInfo = response as UserRequestResponse;
 
-      setCookie("refreshToken", userInfo.refreshToken);
+      authManager.setAccessTokenFunc(userInfo.accessToken);
+      authManager.setRefreshTokenFunc(userInfo.refreshToken);
+
       setUser({
+        _id: "",
         username,
         email: userInfo.email,
         isGoogleUser: userInfo.isGoogleUser,
         name: userInfo.name,
         profilePictureExtension: userInfo.profilePictureExtension,
       });
-      setAccessToken(userInfo.accessToken);
+
+      navigate("/main");
     }
   };
 
@@ -66,6 +63,10 @@ const SignInPgae = ({
     setFieldsError(errorObject);
 
     return !!Object.keys(errorObject).length;
+  };
+
+  const onSwitchPage = () => {
+    navigate(`/signup`);
   };
 
   return (

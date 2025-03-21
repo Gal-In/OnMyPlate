@@ -5,6 +5,7 @@ export type Post = {
   photosUrl: string[];
   rating: number;
   googleApiRating: number;
+  senderId: string;
 };
 
-export type PostToCreate = Omit<Post, "_id">;
+export type PostToCreate = Omit<Omit<Post, "senderId">, "_id">;

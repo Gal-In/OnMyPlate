@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { Post } from "./postModel";
 const { Schema } = mongoose;
 
 export interface User {

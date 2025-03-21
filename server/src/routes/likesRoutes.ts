@@ -145,4 +145,33 @@ router.delete("/", authenticationController.authenticate, like.removeLike);
  */
 router.get("/:postId", like.getAmountOfLikesOnPost);
 
+/**
+ * @swagger
+ * /like/{postId}:
+ *   get:
+ *      summary: Get is post liked by user
+ *      description: Retrieves a specific post if its liked by user
+ *      tags:
+ *          - Likes
+ *      parameters:
+ *          - in: path
+ *            name: postId
+ *            schema:
+ *              type: string
+ *            required: true
+ *            description: The id of the post whose likes we are counting
+ *      responses:
+ *           200:
+ *              description: Single Post
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/Like'
+ *           400:
+ *              description: Invalid input
+ *           500:
+ *              description: Server Error
+ */
+router.get("/status/:postId", authenticationController.authenticate, like.getIsLiked);
+
 export default router;

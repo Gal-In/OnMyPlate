@@ -46,10 +46,13 @@ const getPostById = async (req: Request, res: Response) => {
 };
 
 const getPostsBySenderId = async (req: Request, res: Response) => {
-  const senderId = req.params.senderId;
+  const { skip, limit, senderId } = req.params;
 
   try {
-    const posts = await postModel.find({ senderId });
+    const posts = await postModel
+      .find({ senderId })
+      .skip(Number(skip))
+      .limit(Number(limit));
     res.status(200).send(posts);
   } catch (error) {
     res.status(400).send(error);
@@ -83,6 +86,22 @@ const getAmountOfPosts = async (req: Request, res: Response) => {
   }
 };
 
+
+const removePost = async (req: Request, res: Response) => {
+  const { postId } = req.body;
+
+  const userId = req.params.userId;
+  console.log(postId, userId);
+  
+  try {
+    const post = await postModel.findOneAndDelete({ _id: postId, senderId: userId });
+
+    res.status(200).send(post);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 export default {
   addNewPost,
   getPosts,
@@ -90,4 +109,5 @@ export default {
   getPostsBySenderId,
   updatePost,
   getAmountOfPosts,
+  removePost,
 };

@@ -1,6 +1,8 @@
 import axios from "axios";
-import { DbUser, UserRequestResponse } from "../Types/userTypes";
+import { DbUser, User, UserRequestResponse } from "../Types/userTypes";
 import { Post } from "../Types/postTypes";
+import { Comment } from "../Types/commentTypes";
+import { Like } from "../Types/likeTypes";
 
 export type GoogleMapApiRes = {
   formatted_address: string;
@@ -179,6 +181,83 @@ const getPagedPosts = async (skip: number, limit: number): Promise<Post[]> => {
   }
 };
 
+const getPagedPostsByUser = async (
+  userId: string,
+  skip: number,
+  limit: number
+): Promise<Post[]> => {
+  try {
+    const { data } = await axios.get<Post[]>(
+      process.env.REACT_APP_SERVER_URL +
+        `/posts/sender=/${userId}/${skip}/${limit}`
+    );
+
+    return data;
+  } catch (error: unknown) {
+    return [];
+  }
+};
+
+const getPostById = async (id: string) => {
+  try {
+    const { data } = await axios.get<Post>(
+      process.env.REACT_APP_SERVER_URL + `/posts/${id}`
+    );
+
+    return data;
+  } catch (error: unknown) {
+    return error;
+  }
+};
+
+const getCommentsById = async (postId: string) => {
+  try {
+    const { data } = await axios.get<Comment[]>(
+      process.env.REACT_APP_SERVER_URL + `/comments/${postId}`
+    );
+
+    return data;
+  } catch (error: unknown) {
+    return error;
+  }
+};
+
+const getUserById = async (senderId: string) => {
+  try {
+    const { data } = await axios.get<User>(
+      process.env.REACT_APP_SERVER_URL + `/users/${senderId}`
+    );
+
+    return data;
+  } catch (error: unknown) {
+    return error;
+  }
+};
+
+const getLikeAmount = async (postId: string) => {
+  try {
+    const { data } = await axios.get<{ amount: number }>(
+      process.env.REACT_APP_SERVER_URL + `/like/${postId}`
+    );
+
+    return data.amount;
+  } catch (error: unknown) {
+    return error;
+  }
+};
+
+const getCommentsAmount = async (postId: string) => {
+  try {
+    const { data } = await axios.get<{ amount: number }>(
+      process.env.REACT_APP_SERVER_URL + `/comments/${postId}`
+    );
+
+    return data.amount;
+  } catch (error: unknown) {
+    return error;
+  }
+};
+
 export {
   saveNewUser,
   verifyUser,
@@ -191,4 +270,9 @@ export {
   generatePostDescription,
   getPostCount,
   getPagedPosts,
+  getPostById,
+  getCommentsById,
+  getUserById,
+  getLikeAmount,
+  getPagedPostsByUser,
 };

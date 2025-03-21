@@ -21,10 +21,11 @@ import dataUrlToFile from "../../Services/fileConvertorService";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useUser } from "../../Context/useUser";
 import SignPageWrapper from "../CardWrapper";
-import SignInPgae from "./SignInPage";
 import { User, UserRequestResponse } from "../../Types/userTypes";
 import { Close, Edit } from "@mui/icons-material";
 import { useAuthenticatedServerRequest } from "../../Services/useAuthenticatedServerRequest";
+import { useNavigate } from "react-router-dom";
+import { useAuthApi } from "../../Context/useAuthApi";
 
 type SignUpPageProps = {
   user?: User | null;
@@ -32,7 +33,6 @@ type SignUpPageProps = {
 };
 
 const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
-  const [isSignUp, setIsSignUp] = useState<boolean>(true);
   const [name, setName] = useState<string>(user?.name ?? "");
   const [username, setUsername] = useState<string>(user?.username ?? "");
   const [password, setPassword] = useState<string>(user ? "*********" : "");
@@ -46,9 +46,10 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
   const [requestErrorMessage, setRequestErrorMessage] = useState<string>("");
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
 
-  const { setUser, setAccessToken } = useUser();
+  const { setUser } = useUser();
+  const authManager = useAuthApi();
   const { updateUser } = useAuthenticatedServerRequest();
-
+  const navigate = useNavigate();
   const googleLogin = useGoogleLogin({
     onSuccess: (credentials) => handleGoogleLogin(credentials.access_token),
   });
@@ -62,14 +63,16 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
       setRequestErrorMessage(`שים לב, חשבון גוגל זה כבר קיים`);
     } else {
       const userInfo = response as UserRequestResponse;
+      authManager.setAccessTokenFunc(userInfo.accessToken);
+      authManager.setRefreshTokenFunc(userInfo.refreshToken);
       setUser({
+        _id: "",
         username: userInfo.username,
         email: userInfo.email,
         name: userInfo.name,
         isGoogleUser: userInfo.isGoogleUser,
         profilePictureExtension: userInfo.profilePictureExtension,
       });
-      setAccessToken(userInfo.accessToken);
     }
   };
 
@@ -91,6 +94,7 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
     const profilePictureExtension = imageFile?.type;
 
     const response = await saveNewUser({
+      _id: "",
       username,
       email,
       password,
@@ -117,6 +121,7 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
       const userInfo = response as UserRequestResponse;
 
       setUser({
+        _id: "",
         username,
         email,
         name,
@@ -124,7 +129,10 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
         profilePictureExtension: userInfo.profilePictureExtension,
       });
 
-      setAccessToken(userInfo.accessToken);
+      authManager.setAccessTokenFunc(userInfo.accessToken);
+      authManager.setRefreshTokenFunc(userInfo.refreshToken);
+
+      navigate("/main");
     }
   };
 
@@ -207,20 +215,22 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
     };
   };
 
-  return isSignUp ? (
+  return (
     <SignPageWrapper
       title={user ? "ערוך פרופיל" : "מסך הרשמה"}
       errorMessage={requestErrorMessage}
       setErrorMessage={setRequestErrorMessage}
     >
-      <IconButton
-        sx={{
-          position: "absolute",
-        }}
-        onClick={() => onFinish && onFinish()}
-      >
-        <Close />
-      </IconButton>
+      {onFinish && (
+        <IconButton
+          sx={{
+            position: "absolute",
+          }}
+          onClick={() => onFinish()}
+        >
+          <Close />
+        </IconButton>
+      )}
 
       <div
         style={{
@@ -237,14 +247,14 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
             height: 100,
           }}
         >
-          <Avatar
+          <img
             src={imageUrl ?? "/projectLogo.svg"}
             alt="Profile"
-            sx={{
+            style={{
               height: 100,
               width: 100,
               backgroundColor: "transparent",
-              "& img": { objectFit: "contain" },
+              objectFit: "contain",
             }}
           />
           <input
@@ -387,7 +397,7 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
             <Button
               sx={{ textAlign: "center" }}
               variant="outlined"
-              onClick={() => setIsSignUp(false)}
+              onClick={() => navigate("/signin")}
             >
               כניסה למערכת
             </Button>
@@ -416,12 +426,6 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
         </>
       )}
     </SignPageWrapper>
-  ) : (
-    <SignInPgae
-      requestErrorMessage={requestErrorMessage}
-      setRequestErrorMessage={setRequestErrorMessage}
-      onSwitchPage={() => setIsSignUp(true)}
-    />
   );
 };
 

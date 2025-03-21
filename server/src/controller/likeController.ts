@@ -15,7 +15,7 @@ const addLike = async (req: Request, res: Response) => {
         postId,
       });
 
-      res.status(200).send(like);
+      res.status(201).send(like);
     }
   } catch (error) {
     res.status(400).send(error);
@@ -46,4 +46,17 @@ const getAmountOfLikesOnPost = async (req: Request, res: Response) => {
   }
 };
 
-export default { addLike, removeLike, getAmountOfLikesOnPost };
+const getIsLiked = async (req: Request, res: Response) => {
+  const postId = req.params.postId;
+  const userId = req.params.userId;
+
+  try {
+    const like = await likeModel.findOne({ postId, userId });
+
+    res.status(200).send(!!like);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+export default { addLike, removeLike, getAmountOfLikesOnPost, getIsLiked };

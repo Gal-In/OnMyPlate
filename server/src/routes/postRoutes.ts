@@ -106,6 +106,49 @@ router.post("/", authenticationController.authenticate, post.addNewPost);
 
 /**
  * @swagger
+ * /posts/sender=/{senderId}/{skip}/{limit}:
+ *   get:
+ *      summary: Get post by sender id
+ *      description: Retrieves posts created by specific user, with skip and limit
+ *      tags:
+ *          - Posts
+ *      parameters:
+ *          - in: path
+ *            name: senderId
+ *            schema:
+ *              type: string
+ *            required: true
+ *            description: Sender id
+ *          - in: path
+ *            name: skip
+ *            required: true
+ *            schema:
+ *              type: integer
+ *            description: Amount of posts to skip
+ *          - in: path
+ *            name: limit
+ *            required: true
+ *            schema:
+ *              type: integer
+ *            description: Amount of posts to limit
+ *      responses:
+ *           200:
+ *              description: All posts created by specific user with skip and limit
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              $ref: '#/components/schemas/Post'
+ *           400:
+ *              description: Invalid input
+ *           500:
+ *              description: Server Error
+ */
+router.get("/sender=/:senderId/:skip/:limit", post.getPostsBySenderId);
+
+/**
+ * @swagger
  * /posts/{skip}/{limit}:
  *   get:
  *      summary: Get all existing posts by skip and limit
@@ -197,37 +240,6 @@ router.get("/:id", post.getPostById);
 
 /**
  * @swagger
- * /posts/sender=/{senderId}:
- *   get:
- *      summary: Get post by sender id
- *      description: Retrieves posts created by specific user
- *      tags:
- *          - Posts
- *      parameters:
- *          - in: path
- *            name: senderId
- *            schema:
- *              type: string
- *            required: true
- *            description: Sender id
- *      responses:
- *           200:
- *              description: All posts created by specific user
- *              content:
- *                  application/json:
- *                      schema:
- *                          type: array
- *                          items:
- *                              $ref: '#/components/schemas/Post'
- *           400:
- *              description: Invalid input
- *           500:
- *              description: Server Error
- */
-router.get("/sender=/:senderId", post.getPostsBySenderId);
-
-/**
- * @swagger
  * /posts/{id}:
  *   put:
  *      summary: Update post
@@ -274,5 +286,44 @@ router.get("/sender=/:senderId", post.getPostsBySenderId);
  */
 
 router.put("/:id", authenticationController.authenticate, post.updatePost);
+
+/**
+ * @swagger
+ * /posts:
+ *   delete:
+ *      summary: Remove post
+ *      description: Delete existing post
+ *      tags:
+ *          - Posts
+ *      security:
+ *          - bearerAuth: []
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          postId:
+ *                              type: string
+ *                              description: The id of the post that is being removed
+ *                              example: 67cf2aa6d98400a9a2b93cc3
+ *                      required:
+ *                        - postId
+ *      responses:
+ *          200:
+ *              description: Post removed
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/Post'
+ *          400:
+ *              description: Invalid input
+ *          403:
+ *              descriptiom: Unauthorized
+ *          500:
+ *              description: Server Error
+ */
+router.delete("/:id", authenticationController.authenticate, post.removePost);
 
 export default router;

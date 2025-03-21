@@ -11,6 +11,7 @@ import {
 import SignPageWrapper from "./CardWrapper";
 import { useMemo, useState } from "react";
 import { Close, Diamond } from "@mui/icons-material";
+import DeleteIcon from '@mui/icons-material/Delete';
 import ImagesList from "./ImagesList";
 import { useAuthenticatedServerRequest } from "../Services/useAuthenticatedServerRequest";
 import {
@@ -27,20 +28,21 @@ import RestaurantSelectionDialog from "./SignPage/RestaurantSelectionDialog";
 type AddPostPageProps = {
   setIsAddingPost: React.Dispatch<React.SetStateAction<boolean>>;
   isNewPost: boolean;
+  post?: Post;
 };
 
-const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
-  const [restaurantName, setRestaurantName] = useState<string>("");
+const AddPostPage = ({ setIsAddingPost, isNewPost, post }: AddPostPageProps) => {
+  const [restaurantName, setRestaurantName] = useState<string>(post?.restaurantName ?? "");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [rating, setRating] = useState<number>(0);
-  const [description, setDescription] = useState<string>("");
+  const [rating, setRating] = useState<number>(post?.rating ?? 0);
+  const [description, setDescription] = useState<string>(post?.description ?? "");
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [imagesUrl, setImagesUrl] = useState<string[]>([]);
+  const [imagesUrl, setImagesUrl] = useState<string[]>(post?.photosUrl ?? []);
   const [restaurantOptions, setRestaurantOptions] = useState<GoogleMapApiRes[]>(
     []
   );
 
-  const { addNewPost, updatePost } = useAuthenticatedServerRequest();
+  const { addNewPost, updatePost, deletePost } = useAuthenticatedServerRequest();
 
   const handleAddPost = async () => {
     setIsLoading(true);
@@ -48,7 +50,6 @@ const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
     const response = await findRestaurantByName({
       input: restaurantName,
     });
-
     if (axios.isAxiosError(response)) setErrorMessage("חלה תקלה, נא נסה שנית");
     else {
       const restaurants = response as GoogleMapApiRes[];
@@ -73,9 +74,6 @@ const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
         photosUrl: [],
       });
 
-      console.log({ response });
-      console.log({ imagesUrl });
-
       if (axios.isAxiosError(response)) {
         setErrorMessage("חלה תקלה בשמירת הפוסט");
         return;
@@ -88,15 +86,32 @@ const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
         )
       );
 
-      console.log({ files });
-
       const photosUrl = files.map((file) => postId + "_" + file.name);
 
       await uploadPostPictures(postId, files);
       await updatePost(postId, { photosUrl });
 
       setIsAddingPost(false);
-    } else {
+    } else if (post) {
+      const response = await updatePost(post?._id, {
+        description,
+        restaurantName,
+        rating,
+        googleApiRating: selectedRestaurant.rating,
+        photosUrl: [],
+      })
+
+      const postId = (response as Post)._id;
+      const files = await Promise.all(
+        imagesUrl.map((imageUrl, index) =>
+          dataUrlToFile(imageUrl, index.toString())
+        )
+      );
+      const photosUrl = files.map((file) => postId + "_" + file.name);
+
+      await uploadPostPictures(postId, files);
+      await updatePost(postId, { photosUrl });
+      setIsAddingPost(false);
     }
   };
 
@@ -126,22 +141,42 @@ const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
     [imagesUrl, restaurantName]
   );
 
+  const removePost = async () => {
+    if (post) {
+      const response = await deletePost(post?._id)
+      if (axios.isAxiosError(response)) {
+        setErrorMessage("חלה תקלה במחיקת הפוסט");
+        return;
+      }
+      setIsAddingPost(false)
+    }
+  }
+
   return (
     <>
       <SignPageWrapper
-        title={"הוסף פוסט"}
+        title={isNewPost ? "הוסף פוסט" : "ערוך פוסט"}
         errorMessage={errorMessage}
         setErrorMessage={setErrorMessage}
       >
-        <IconButton
-          sx={{
-            position: "absolute",
-          }}
-          onClick={() => setIsAddingPost(false)}
-          disabled={isLoading}
-        >
-          <Close />
-        </IconButton>
+        <div style={{ position: 'absolute', display: "flex" }}>
+          <IconButton
+            onClick={() => setIsAddingPost(false)}
+            disabled={isLoading}
+          >
+            <Close />
+          </IconButton>
+
+          {
+            post &&
+            <IconButton
+              onClick={removePost}
+              disabled={isLoading}
+            >
+              <DeleteIcon />
+            </IconButton>
+          }
+        </div>
         <div
           style={{
             display: "flex",
@@ -155,6 +190,7 @@ const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
             imagesUrl={imagesUrl}
             setImagesUrl={setImagesUrl}
             setErrorMessage={setErrorMessage}
+            height={"20vh"}
           />
           <Box
             component="form"
@@ -190,11 +226,10 @@ const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
                 />
 
                 <Tooltip
-                  title={`צור תיאור אוטומטי לפוסט ${
-                    !isAbleToAutoGenerateDescription
-                      ? " - יש לצרף את שם המסעדה ולפחות תמונה אחת"
-                      : ""
-                  }`}
+                  title={`צור תיאור אוטומטי לפוסט ${!isAbleToAutoGenerateDescription
+                    ? " - יש לצרף את שם המסעדה ולפחות תמונה אחת"
+                    : ""
+                    }`}
                 >
                   <IconButton
                     onClick={handleGenerateDescription}
@@ -238,7 +273,7 @@ const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
                 alignSelf: "center",
               }}
             >
-              הוסף פוסט
+              {isNewPost ? "הוסף פוסט" : "ערוך פוסט"}
             </Button>
           </Box>
         </div>
