@@ -4,8 +4,7 @@ import likeModel from "../models/likeModel";
 const addLike = async (req: Request, res: Response) => {
   const { postId } = req.body;
   const userId = req.params.userId;
-  console.log(userId);
-  
+
   try {
     const isLikeExist = await likeModel.findOne({ postId, userId });
 

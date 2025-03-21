@@ -25,8 +25,7 @@ const ImagesList = ({
   maxImagesToAdd = 5,
 }: ImagesListProps) => {
   const [currImageIndex, setCurrImageIndex] = useState<number>(0);
-  console.log(imagesUrl, currImageIndex);
-  
+
   const handleCapture = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const target = event.target;
     const file = target.files?.[0];
