@@ -26,7 +26,7 @@ GET http://localhost:8000/posts/6766ae86b634082a42ed607d
 
 ###
 
-GET http://localhost:8000/posts/sender=/someSenderId
+GET http://localhost:8000/posts/sender=/someSenderId/1/1
 
 ###
 

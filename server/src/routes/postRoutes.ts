@@ -106,6 +106,49 @@ router.post("/", authenticationController.authenticate, post.addNewPost);
 
 /**
  * @swagger
+ * /posts/sender=/{senderId}/{skip}/{limit}:
+ *   get:
+ *      summary: Get post by sender id
+ *      description: Retrieves posts created by specific user, with skip and limit
+ *      tags:
+ *          - Posts
+ *      parameters:
+ *          - in: path
+ *            name: senderId
+ *          - in: path
+ *            name: skip
+ *            required: true
+ *            schema:
+ *              type: integer
+ *            description: Amount of posts to skip
+ *          - in: path
+ *            name: limit
+ *            required: true
+ *            schema:
+ *              type: integer
+ *            description: Amount of posts to limit
+ *            schema:
+ *              type: string
+ *            required: true
+ *            description: Sender id
+ *      responses:
+ *           200:
+ *              description: All posts created by specific user with skip and limit
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              $ref: '#/components/schemas/Post'
+ *           400:
+ *              description: Invalid input
+ *           500:
+ *              description: Server Error
+ */
+router.get("/sender=/:senderId/:skip/:limit", post.getPostsBySenderId);
+
+/**
+ * @swagger
  * /posts/{skip}/{limit}:
  *   get:
  *      summary: Get all existing posts by skip and limit
@@ -194,37 +237,6 @@ router.get("/amount", post.getAmountOfPosts);
  *              description: Server Error
  */
 router.get("/:id", post.getPostById);
-
-/**
- * @swagger
- * /posts/sender=/{senderId}:
- *   get:
- *      summary: Get post by sender id
- *      description: Retrieves posts created by specific user
- *      tags:
- *          - Posts
- *      parameters:
- *          - in: path
- *            name: senderId
- *            schema:
- *              type: string
- *            required: true
- *            description: Sender id
- *      responses:
- *           200:
- *              description: All posts created by specific user
- *              content:
- *                  application/json:
- *                      schema:
- *                          type: array
- *                          items:
- *                              $ref: '#/components/schemas/Post'
- *           400:
- *              description: Invalid input
- *           500:
- *              description: Server Error
- */
-router.get("/sender=/:senderId", post.getPostsBySenderId);
 
 /**
  * @swagger

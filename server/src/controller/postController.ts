@@ -46,10 +46,13 @@ const getPostById = async (req: Request, res: Response) => {
 };
 
 const getPostsBySenderId = async (req: Request, res: Response) => {
-  const senderId = req.params.senderId;
+  const { skip, limit, senderId } = req.params;
 
   try {
-    const posts = await postModel.find({ senderId });
+    const posts = await postModel
+      .find({ senderId })
+      .skip(Number(skip))
+      .limit(Number(limit));
     res.status(200).send(posts);
   } catch (error) {
     res.status(400).send(error);

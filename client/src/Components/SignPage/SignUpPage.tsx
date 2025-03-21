@@ -21,7 +21,6 @@ import dataUrlToFile from "../../Services/fileConvertorService";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useUser } from "../../Context/useUser";
 import SignPageWrapper from "../CardWrapper";
-import SignInPgae from "./SignInPage";
 import { User, UserRequestResponse } from "../../Types/userTypes";
 import { Close, Edit } from "@mui/icons-material";
 import { useAuthenticatedServerRequest } from "../../Services/useAuthenticatedServerRequest";
@@ -33,7 +32,6 @@ type SignUpPageProps = {
 };
 
 const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
-  const [isSignUp, setIsSignUp] = useState<boolean>(true);
   const [name, setName] = useState<string>(user?.name ?? "");
   const [username, setUsername] = useState<string>(user?.username ?? "");
   const [password, setPassword] = useState<string>(user ? "*********" : "");
@@ -129,7 +127,7 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
       });
 
       setAccessToken(userInfo.accessToken);
-      navigate("/main")
+      navigate("/main");
     }
   };
 
@@ -212,20 +210,22 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
     };
   };
 
-  return isSignUp ? (
+  return (
     <SignPageWrapper
       title={user ? "ערוך פרופיל" : "מסך הרשמה"}
       errorMessage={requestErrorMessage}
       setErrorMessage={setRequestErrorMessage}
     >
-      <IconButton
-        sx={{
-          position: "absolute",
-        }}
-        onClick={() => onFinish && onFinish()}
-      >
-        <Close />
-      </IconButton>
+      {onFinish && (
+        <IconButton
+          sx={{
+            position: "absolute",
+          }}
+          onClick={() => onFinish()}
+        >
+          <Close />
+        </IconButton>
+      )}
 
       <div
         style={{
@@ -242,14 +242,14 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
             height: 100,
           }}
         >
-          <Avatar
+          <img
             src={imageUrl ?? "/projectLogo.svg"}
             alt="Profile"
-            sx={{
+            style={{
               height: 100,
               width: 100,
               backgroundColor: "transparent",
-              "& img": { objectFit: "contain" },
+              objectFit: "contain",
             }}
           />
           <input
@@ -421,12 +421,6 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
         </>
       )}
     </SignPageWrapper>
-  ) : (
-    <SignInPgae
-      // requestErrorMessage={requestErrorMessage}
-      // setRequestErrorMessage={setRequestErrorMessage}
-      // onSwitchPage={() => setIsSignUp(true)}
-    />
   );
 };
 
