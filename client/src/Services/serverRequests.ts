@@ -181,6 +181,23 @@ const getPagedPosts = async (skip: number, limit: number): Promise<Post[]> => {
   }
 };
 
+const getPagedPostsByUser = async (
+  userId: string,
+  skip: number,
+  limit: number
+): Promise<Post[]> => {
+  try {
+    const { data } = await axios.get<Post[]>(
+      process.env.REACT_APP_SERVER_URL +
+        `/posts/sender=/${userId}/${skip}/${limit}`
+    );
+
+    return data;
+  } catch (error: unknown) {
+    return [];
+  }
+};
+
 const getPostById = async (id: string) => {
   try {
     const { data } = await axios.get<Post>(
@@ -203,7 +220,7 @@ const getCommentsById = async (postId: string) => {
   } catch (error: unknown) {
     return error;
   }
-}
+};
 
 const getUserById = async (senderId: string) => {
   try {
@@ -215,11 +232,11 @@ const getUserById = async (senderId: string) => {
   } catch (error: unknown) {
     return error;
   }
-}
+};
 
 const getLikeAmount = async (postId: string) => {
   try {
-    const { data } = await axios.get<{amount: number}>(
+    const { data } = await axios.get<{ amount: number }>(
       process.env.REACT_APP_SERVER_URL + `/like/${postId}`
     );
 
@@ -227,11 +244,11 @@ const getLikeAmount = async (postId: string) => {
   } catch (error: unknown) {
     return error;
   }
-}
+};
 
 const getCommentsAmount = async (postId: string) => {
   try {
-    const { data } = await axios.get<{amount: number}>(
+    const { data } = await axios.get<{ amount: number }>(
       process.env.REACT_APP_SERVER_URL + `/comments/${postId}`
     );
 
@@ -239,7 +256,7 @@ const getCommentsAmount = async (postId: string) => {
   } catch (error: unknown) {
     return error;
   }
-}
+};
 
 export {
   saveNewUser,
@@ -257,4 +274,5 @@ export {
   getCommentsById,
   getUserById,
   getLikeAmount,
+  getPagedPostsByUser,
 };

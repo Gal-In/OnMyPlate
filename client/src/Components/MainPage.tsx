@@ -4,11 +4,15 @@ import AddPostPage from "./AddPostPage";
 import { useUser } from "../Context/useUser";
 import SignUpPage from "./SignPage/SignUpPage";
 import { Post } from "../Types/postTypes";
-import { Box, TextField } from "@mui/material";
+import { Box, TextField, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import PostTeaser from "./PostTeaser";
-import { getPagedPosts, getPostCount } from "../Services/serverRequests";
-import { useNavigate } from 'react-router-dom';
+import {
+  getPagedPosts,
+  getPagedPostsByUser,
+  getPostCount,
+} from "../Services/serverRequests";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const MainPage = () => {
@@ -17,25 +21,24 @@ const MainPage = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [maxAmount, setMaxAmount] = useState<number>(0);
   const [isFetchingPosts, setIsFetchingPosts] = useState<boolean>(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [gridState, setGridState] = useState<string>("allPosts");
+
+  const navigate = useNavigate();
+  const { user } = useUser();
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredPosts = posts.filter(post => post.restaurantName.toLowerCase().includes(searchTerm.toLowerCase()));
-  
-  const navigate = useNavigate();
-
-  const handleCardClick = (id: string) => {
-    navigate(`/restaurant/${id}`);
-  };
-
-  const { user } = useUser();
+  const filteredPosts = posts.filter((post) =>
+    post.restaurantName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   useEffect(() => {
-    fetchPosts(10);
-  }, []);
+    setPosts([]);
+    fetchPosts(9, 0);
+  }, [gridState, isAddingPost]);
 
   useEffect(() => {
     const getAmountOfPosts = async () => {
@@ -47,10 +50,20 @@ const MainPage = () => {
     getAmountOfPosts();
   }, [posts]);
 
-  const fetchPosts = async (limit: number = 4) => {
+  const fetchPosts = async (limit: number, amountOfFetchedPosts: number) => {
+    let newPosts: Post[] = [];
+
     setIsFetchingPosts(true);
 
-    const newPosts = await getPagedPosts(posts.length, limit);
+    if (gridState === "allPosts") {
+      newPosts = await getPagedPosts(amountOfFetchedPosts, limit);
+    } else {
+      newPosts = await getPagedPostsByUser(
+        user?._id as string,
+        amountOfFetchedPosts,
+        limit
+      );
+    }
 
     if (newPosts.length) setPosts((prev) => prev.concat(newPosts));
 
@@ -65,7 +78,7 @@ const MainPage = () => {
       !isFetchingPosts &&
       posts.length <= maxAmount
     ) {
-      fetchPosts();
+      fetchPosts(3, posts.length);
     }
   };
 
@@ -94,24 +107,67 @@ const MainPage = () => {
               overflowY: "auto",
               height: "90vh",
             }}
+            dir="rtl"
             onScroll={handleScroll}
           >
-            <TextField
-              sx={{
-                border: "1px solid white",
-                //   outline: 0,
-                borderRadius: "5px",
-                height: "13vh",
-                width: "30vw",
-                position: "relative",
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-around",
               }}
-              value={searchTerm} 
-              onChange={handleSearchChange} 
-              placeholder="חיפוש"
-            />
+            >
+              <TextField
+                sx={{
+                  border: "1px solid white",
+                  borderRadius: "5px",
+                  height: "13vh",
+                  width: "30vw",
+                  position: "relative",
+                  justifyContent: "space-around",
+                }}
+                value={searchTerm}
+                onChange={handleSearchChange}
+                placeholder="חיפוש"
+              />
+
+              <ToggleButtonGroup
+                value={gridState}
+                onChange={(_, value) => {
+                  if (value) {
+                    setGridState(value);
+                    setSearchTerm("");
+                  }
+                }}
+                exclusive
+              >
+                <ToggleButton
+                  value="myPosts"
+                  sx={{
+                    "&.Mui-selected, &.Mui-selected:hover": {
+                      color: "white",
+                      backgroundColor: "darkviolet",
+                    },
+                  }}
+                >
+                  הפוסטים שלי
+                </ToggleButton>
+                <ToggleButton
+                  value="allPosts"
+                  sx={{
+                    "&.Mui-selected, &.Mui-selected:hover": {
+                      color: "white",
+                      backgroundColor: "darkviolet",
+                    },
+                  }}
+                >
+                  כל הפוסטים
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </div>
             <Box sx={{ flexGrow: 1 }}>
               <Grid container spacing={8}>
-                {filteredPosts.map((post, i) => (
+                {filteredPosts.map((post) => (
                   <Grid size={4} key={post._id}>
                     <PostTeaser post={post} onPostClick={onPostClick} />
                   </Grid>

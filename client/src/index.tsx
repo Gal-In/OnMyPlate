@@ -12,6 +12,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { UserContextProvider } from "./Context/useUser";
 import { CookiesProvider } from "react-cookie";
 import { AuthApiContextProvider } from "./Context/useAuthApi";
+import { BrowserRouter } from "react-router-dom";
 
 const theme = createTheme({
   direction: "rtl",
@@ -47,7 +48,9 @@ root.render(
         <UserContextProvider>
           <AuthApiContextProvider>
             <CookiesProvider>
-              <App />
+              <BrowserRouter>
+                <App />
+              </BrowserRouter>
             </CookiesProvider>
           </AuthApiContextProvider>
         </UserContextProvider>
