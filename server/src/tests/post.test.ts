@@ -130,7 +130,7 @@ describe("Test Posts API", () => {
 
   test("Test get posts by incorrect sender id", async () => {
     const response = await request(app).get(
-      "/posts/sender=/6780eba5f7a9d4a880c56d6b"
+      "/posts/sender=/6780eba5f7a9d4a880c56d6b/0/100"
     );
 
     expect(response.body.length).toEqual(0);

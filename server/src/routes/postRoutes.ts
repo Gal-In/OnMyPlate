@@ -109,19 +109,31 @@ router.post("/", authenticationController.authenticate, post.addNewPost);
  * /posts/sender=/{senderId}/{skip}/{limit}:
  *   get:
  *      summary: Get post by sender id
- *      description: Retrieves posts created by specific user
+ *      description: Retrieves posts created by specific user, with skip and limit
  *      tags:
  *          - Posts
  *      parameters:
  *          - in: path
  *            name: senderId
+ *          - in: path
+ *            name: skip
+ *            required: true
+ *            schema:
+ *              type: integer
+ *            description: Amount of posts to skip
+ *          - in: path
+ *            name: limit
+ *            required: true
+ *            schema:
+ *              type: integer
+ *            description: Amount of posts to limit
  *            schema:
  *              type: string
  *            required: true
  *            description: Sender id
  *      responses:
  *           200:
- *              description: All posts created by specific user
+ *              description: All posts created by specific user with skip and limit
  *              content:
  *                  application/json:
  *                      schema:
