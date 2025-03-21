@@ -75,7 +75,7 @@ const router = express.Router();
  *          500:
  *              description: Server Error
  */
-router.post("/:userId", authenticationController.authenticate, like.addLike);
+router.post("/", authenticationController.authenticate, like.addLike);
 
 /**
  * @swagger
@@ -114,7 +114,7 @@ router.post("/:userId", authenticationController.authenticate, like.addLike);
  *          500:
  *              description: Server Error
  */
-router.delete("/:userId", authenticationController.authenticate, like.removeLike);
+router.delete("/", authenticationController.authenticate, like.removeLike);
 
 /**
  * @swagger
@@ -172,6 +172,6 @@ router.get("/:postId", like.getAmountOfLikesOnPost);
  *           500:
  *              description: Server Error
  */
-router.get("/:userId/:postId", like.getIsLiked);
+router.get("/status/:postId", like.getIsLiked);
 
 export default router;

@@ -2,9 +2,10 @@ import { Card, CardActions, CardContent, Typography } from "@mui/material";
 import { Post } from "../Types/postTypes";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import { useEffect, useState } from "react";
-import { addLike, deleteLike, getIsLikedByUser, getLikeAmount } from "../Services/serverRequests";
+import { getLikeAmount } from "../Services/serverRequests";
 import axios from "axios";
 import { useUser } from "../Context/useUser";
+import { useAuthenticatedServerRequest } from "../Services/useAuthenticatedServerRequest";
 
 type PostTeaserProps = {
   post: Post;
@@ -14,7 +15,7 @@ type PostTeaserProps = {
 const PostTeaser = ({ post, onPostClick }: PostTeaserProps) => {
   const [likesCount, setLikesCount] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
-  const { user } = useUser();
+  const { addLike, deleteLike, getIsLikedByUser } = useAuthenticatedServerRequest();
 
   useEffect(() => {
     const getLikes = async () => {
@@ -28,19 +29,27 @@ const PostTeaser = ({ post, onPostClick }: PostTeaserProps) => {
 
   useEffect(() => {
     const getIsLiked = async() => {
-      if (user?._id) {
-        const response = await getIsLikedByUser(post._id, user?._id)
+        const response = await getIsLikedByUser(post._id)
         if (!axios.isAxiosError(response))
           setIsLiked((response as boolean));
-      }
     }
 
     getIsLiked();
   }, []);
 
+  const add = () => {
+    addLike(post._id);
+    setIsLiked(true);
+    setLikesCount(likesCount + 1);
+  }
+
+  const remove = () => {
+    deleteLike(post._id);
+    setIsLiked(false);
+    setLikesCount(likesCount - 1);
+  }
   const toggleLike = () => {
-    if(user)
-    isLiked ? deleteLike(post._id, user?._id) : addLike(post._id, user?._id)
+    isLiked ? remove() : add()
   }
 
   return (

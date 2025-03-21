@@ -4,7 +4,8 @@ import likeModel from "../models/likeModel";
 const addLike = async (req: Request, res: Response) => {
   const { postId } = req.body;
   const userId = req.params.userId;
-
+  console.log(userId);
+  
   try {
     const isLikeExist = await likeModel.findOne({ postId, userId });
 
@@ -15,7 +16,7 @@ const addLike = async (req: Request, res: Response) => {
         postId,
       });
 
-      res.status(200).send(like);
+      res.status(201).send(like);
     }
   } catch (error) {
     res.status(400).send(error);
@@ -49,6 +50,7 @@ const getAmountOfLikesOnPost = async (req: Request, res: Response) => {
 const getIsLiked = async (req: Request, res: Response) => {
   const postId = req.params.postId;
   const userId = req.params.userId;
+console.log(userId);
 
   try {
     const like = await likeModel.findOne({ postId, userId });

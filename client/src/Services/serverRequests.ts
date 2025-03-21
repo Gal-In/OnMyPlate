@@ -232,49 +232,11 @@ const addNewComment = async (comment: Comment) => {
 
 const getLikeAmount = async (postId: string) => {
   try {
-    const { data } = await axios.get<number>(
+    const { data } = await axios.get<{amount: number}>(
       process.env.REACT_APP_SERVER_URL + `/like/${postId}`
     );
 
-    return data;
-  } catch (error: unknown) {
-    return error;
-  }
-}
-
-const addLike = async (postId: string, userId: string) => {
-  try {
-    const { data } = await axios.post(
-      process.env.REACT_APP_SERVER_URL + `/like/${userId}`,
-      postId
-    );
-
-    return data;
-  } catch (error) {
-    return error;
-  }
-}
-
-const deleteLike = async (postId: string, userId: string) => {
-  try {
-    const { data } = await axios.delete(
-      process.env.REACT_APP_SERVER_URL + `/like/${userId}`,{
-      data:{postId}}
-    );
-
-    return data;
-  } catch (error) {
-    return error;
-  }
-}
-
-const getIsLikedByUser = async (postId: string, userId: string) => {
-  try {
-    const { data } = await axios.get<boolean>(
-      process.env.REACT_APP_SERVER_URL + `/like/${userId}/${postId}`
-    );
-
-    return data;
+    return data.amount;
   } catch (error: unknown) {
     return error;
   }
@@ -297,7 +259,4 @@ export {
   addNewComment,
   getUserById,
   getLikeAmount,
-  addLike,
-  deleteLike,
-  getIsLikedByUser
 };

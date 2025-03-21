@@ -22,7 +22,6 @@ const encryptPassword = async (password: string) => {
 
 const generateTokens = (user: User) => {
   const userId = user._id.toString();
-  console.log(process.env.ACCESS_TOKEN_SECRET, process.env.REFRESH_TOKEN_EXPIRATION);
   
   const accessToken = jwt.sign(
     { id: userId },
