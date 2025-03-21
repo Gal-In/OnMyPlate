@@ -12,7 +12,6 @@ import { Box } from "@mui/system";
 import { useUser } from "../../Context/useUser";
 import { verifyUser } from "../../Services/serverRequests";
 import axios from "axios";
-import { useCookies } from "react-cookie";
 import { UserRequestResponse } from "../../Types/userTypes";
 import { useNavigate } from "react-router-dom";
 import { useAuthApi } from "../../Context/useAuthApi";
@@ -23,7 +22,6 @@ const SignInPgae = () => {
   const [fieldsError, setFieldsError] = useState<Record<string, string>>({});
   const [requestErrorMessage, setRequestErrorMessage] = useState<string>("");
 
-  const [_, setCookie] = useCookies(["refreshToken"]);
   const { setUser } = useUser();
   const navigate = useNavigate();
   const authManager = useAuthApi();

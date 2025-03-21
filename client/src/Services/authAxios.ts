@@ -8,7 +8,7 @@ type CustomAxiosConfig = InternalAxiosRequestConfig & {
 
 class AxiosManager {
   private accessToken: string | null;
-  private refreshToken: string;
+  private refreshToken: string | null;
   private setAccessToken;
   private setRefreshToken;
 
@@ -16,7 +16,7 @@ class AxiosManager {
     accessToken: string | null,
     refreshToken: string,
     setAccessToken: React.Dispatch<React.SetStateAction<string | null>>,
-    setRefreshToken: (newToken: string) => void
+    setRefreshToken: (newToken: string | null) => void
   ) {
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
@@ -29,13 +29,13 @@ class AxiosManager {
     this.setAccessToken(newAccessToken);
   };
 
-  setRefreshTokenFunc = (newRefreshToken: string) => {
+  setRefreshTokenFunc = (newRefreshToken: string | null) => {
     this.refreshToken = newRefreshToken;
     this.setRefreshToken(newRefreshToken);
   };
 
   initToken = async () => {
-    const response = await refreshAccessToken(this.refreshToken);
+    const response = await refreshAccessToken(this.refreshToken ?? "");
     if (!axios.isAxiosError(response)) {
       const { accessToken, refreshToken, ...userDetails } =
         response as UserRequestResponse;
@@ -72,7 +72,7 @@ class AxiosManager {
           !config.isNotFirstRequest
         ) {
           config.isNotFirstRequest = true;
-          const response = await refreshAccessToken(this.refreshToken);
+          const response = await refreshAccessToken(this.refreshToken ?? "");
 
           if (response && !axios.isAxiosError(response)) {
             const tokens = response as UserRequestResponse;
