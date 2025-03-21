@@ -115,6 +115,10 @@ router.post("/", authenticationController.authenticate, post.addNewPost);
  *      parameters:
  *          - in: path
  *            name: senderId
+ *            schema:
+ *              type: string
+ *            required: true
+ *            description: Sender id
  *          - in: path
  *            name: skip
  *            required: true
@@ -127,10 +131,6 @@ router.post("/", authenticationController.authenticate, post.addNewPost);
  *            schema:
  *              type: integer
  *            description: Amount of posts to limit
- *            schema:
- *              type: string
- *            required: true
- *            description: Sender id
  *      responses:
  *           200:
  *              description: All posts created by specific user with skip and limit
@@ -180,7 +180,11 @@ router.get("/sender=/:senderId/:skip/:limit", post.getPostsBySenderId);
  *          500:
  *              description: Server Error
  */
-router.get("/:skip/:limit", post.getPosts);
+router.get(
+  "/:skip/:limit",
+  authenticationController.authenticate,
+  post.getPosts
+);
 
 /**
  * @swagger
