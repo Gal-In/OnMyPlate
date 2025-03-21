@@ -14,7 +14,9 @@ export const AuthApiContextProvider = ({
   children,
 }: AuthApiContextProviderProps) => {
   const { accessToken, setAccessToken } = useUser();
-  const [{ refreshToken }, setCookie] = useCookies(["refreshToken"]);
+  const [{ refreshToken }, setCookie, removeCookie] = useCookies([
+    "refreshToken",
+  ]);
   const { setUser } = useUser();
   const location = useLocation();
   const navigate = useNavigate();
@@ -24,7 +26,12 @@ export const AuthApiContextProvider = ({
       accessToken,
       refreshToken,
       setAccessToken,
-      (newRefreshToken: string) => setCookie("refreshToken", newRefreshToken)
+      (newRefreshToken: string | null) => {
+        removeCookie("refreshToken");
+
+        if (newRefreshToken)
+          setCookie("refreshToken", newRefreshToken, { path: "/" });
+      }
     );
   }, []);
 
@@ -45,6 +52,7 @@ export const AuthApiContextProvider = ({
 
           setUser(user);
         } else {
+          removeCookie("refreshToken");
           if (pathName !== "/signin" && pathName !== "/signup") {
             navigate("/signIn");
           }
