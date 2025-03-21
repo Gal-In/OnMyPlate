@@ -15,6 +15,7 @@ import axios from "axios";
 import { useCookies } from "react-cookie";
 import { UserRequestResponse } from "../../Types/userTypes";
 import { useNavigate } from "react-router-dom";
+import { useAuthApi } from "../../Context/useAuthApi";
 
 const SignInPgae = () => {
   const [username, setUsername] = useState<string>("");
@@ -23,8 +24,10 @@ const SignInPgae = () => {
   const [requestErrorMessage, setRequestErrorMessage] = useState<string>("");
 
   const [_, setCookie] = useCookies(["refreshToken"]);
-  const { setUser, setAccessToken } = useUser();
+  const { setUser } = useUser();
   const navigate = useNavigate();
+  const authManager = useAuthApi();
+
   const handleSubmit = async () => {
     if (!validateInputs()) {
       const response = await verifyUser(username, password);
@@ -36,7 +39,9 @@ const SignInPgae = () => {
 
       const userInfo = response as UserRequestResponse;
 
-      setCookie("refreshToken", userInfo.refreshToken);
+      authManager.setAccessTokenFunc(userInfo.accessToken);
+      authManager.setRefreshTokenFunc(userInfo.refreshToken);
+
       setUser({
         _id: "",
         username,
@@ -45,8 +50,8 @@ const SignInPgae = () => {
         name: userInfo.name,
         profilePictureExtension: userInfo.profilePictureExtension,
       });
-      setAccessToken(userInfo.accessToken);
-      navigate("/main")
+
+      navigate("/main");
     }
   };
 
@@ -64,7 +69,8 @@ const SignInPgae = () => {
 
   const onSwitchPage = () => {
     navigate(`/signup`);
-  }
+  };
+
   return (
     <>
       <SignPageWrapper

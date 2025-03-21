@@ -17,12 +17,13 @@ import { logoutUser } from "../Services/serverRequests";
 import { Add } from "@mui/icons-material";
 import { Post } from "../Types/postTypes";
 import { useNavigate } from "react-router-dom";
+import { useAuthApi } from "../Context/useAuthApi";
 
 type ApplicationBarProps = {
   setIsAddingPost: React.Dispatch<React.SetStateAction<boolean>>;
   setIsEditingProfile: React.Dispatch<React.SetStateAction<boolean>>;
   setIsNewPost: React.Dispatch<React.SetStateAction<boolean>>;
-  setEditPost: React.Dispatch<React.SetStateAction<Post | undefined>>
+  setEditPost: React.Dispatch<React.SetStateAction<Post | undefined>>;
 };
 
 const darkTheme = createTheme({
@@ -38,10 +39,11 @@ const ApplicationBar = ({
   setIsAddingPost,
   setIsEditingProfile,
   setIsNewPost,
-  setEditPost
+  setEditPost,
 }: ApplicationBarProps) => {
   const [{ refreshToken }, _, removeCookie] = useCookies(["refreshToken"]);
-  const { user, setUser, setAccessToken } = useUser();
+  const { user, setUser } = useUser();
+  const authInstance = useAuthApi();
   const navigate = useNavigate();
 
   const logout = () => {
@@ -49,7 +51,9 @@ const ApplicationBar = ({
 
     navigate("/signIn");
     removeCookie("refreshToken");
-    setAccessToken(null);
+
+    authInstance.setAccessTokenFunc("");
+    authInstance.setRefreshTokenFunc("");
     setUser(null);
   };
 
@@ -65,7 +69,7 @@ const ApplicationBar = ({
     setIsNewPost(true);
     setIsAddingPost(true);
     setEditPost(undefined);
-  }
+  };
 
   return (
     <ThemeProvider theme={darkTheme}>

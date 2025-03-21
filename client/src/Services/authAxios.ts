@@ -24,6 +24,33 @@ class AxiosManager {
     this.setRefreshToken = setRefreshToken;
   }
 
+  setAccessTokenFunc = (newAccessToken: string) => {
+    this.accessToken = newAccessToken;
+    this.setAccessToken(newAccessToken);
+  };
+
+  setRefreshTokenFunc = (newRefreshToken: string) => {
+    this.refreshToken = newRefreshToken;
+    this.setRefreshToken(newRefreshToken);
+  };
+
+  initToken = async () => {
+    const response = await refreshAccessToken(this.refreshToken);
+    if (!axios.isAxiosError(response)) {
+      const { accessToken, refreshToken, ...userDetails } =
+        response as UserRequestResponse;
+
+      this.accessToken = accessToken;
+      this.refreshToken = refreshToken;
+
+      this.setAccessToken(accessToken);
+      this.setRefreshToken(refreshToken);
+      return userDetails;
+    }
+
+    return null;
+  };
+
   getAuthorizedAxios = () => {
     const authorizedAxios = axios.create({
       baseURL: process.env.REACT_APP_SERVER_URL,

@@ -45,15 +45,15 @@ root.render(
       <GoogleOAuthProvider
         clientId={process.env.REACT_APP_GOOGLE_OAUTH_CLIENT_ID as string}
       >
-        <UserContextProvider>
-          <AuthApiContextProvider>
-            <CookiesProvider>
-              <BrowserRouter>
+        <BrowserRouter>
+          <UserContextProvider>
+            <AuthApiContextProvider>
+              <CookiesProvider>
                 <App />
-              </BrowserRouter>
-            </CookiesProvider>
-          </AuthApiContextProvider>
-        </UserContextProvider>
+              </CookiesProvider>
+            </AuthApiContextProvider>
+          </UserContextProvider>
+        </BrowserRouter>
       </GoogleOAuthProvider>
     </ThemeProvider>
   </CacheProvider>
