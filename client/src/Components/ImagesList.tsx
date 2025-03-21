@@ -13,6 +13,7 @@ type ImagesListProps = {
   setImagesUrl: React.Dispatch<React.SetStateAction<string[]>>;
   setErrorMessage: React.Dispatch<React.SetStateAction<string>>;
   maxImagesToAdd?: number;
+  height: string;
 };
 
 const ImagesList = ({
@@ -20,6 +21,7 @@ const ImagesList = ({
   imagesUrl,
   setImagesUrl,
   setErrorMessage,
+  height,
   maxImagesToAdd = 5,
 }: ImagesListProps) => {
   const [currImageIndex, setCurrImageIndex] = useState<number>(0);
@@ -78,7 +80,7 @@ const ImagesList = ({
             <Box
               sx={{
                 width: "100%",
-                height: "100%",
+                height: height,
                 padding: "10px",
               }}
             >

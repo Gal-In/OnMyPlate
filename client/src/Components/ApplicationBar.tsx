@@ -15,10 +15,13 @@ import { useCookies } from "react-cookie";
 import { useMemo } from "react";
 import { logoutUser } from "../Services/serverRequests";
 import { Add } from "@mui/icons-material";
+import { Post } from "../Types/postTypes";
 
 type ApplicationBarProps = {
   setIsAddingPost: React.Dispatch<React.SetStateAction<boolean>>;
   setIsEditingProfile: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsNewPost: React.Dispatch<React.SetStateAction<boolean>>;
+  setEditPost: React.Dispatch<React.SetStateAction<Post | undefined>>
 };
 
 const darkTheme = createTheme({
@@ -33,6 +36,8 @@ const darkTheme = createTheme({
 const ApplicationBar = ({
   setIsAddingPost,
   setIsEditingProfile,
+  setIsNewPost,
+  setEditPost
 }: ApplicationBarProps) => {
   const [{ refreshToken }, _, removeCookie] = useCookies(["refreshToken"]);
   const { user, setUser, setAccessToken } = useUser();
@@ -52,6 +57,12 @@ const ApplicationBar = ({
         : "/projectLogo.svg",
     [user]
   );
+
+  const onAddPostClick = () => {
+    setIsNewPost(true);
+    setIsAddingPost(true);
+    setEditPost(undefined);
+  }
 
   return (
     <ThemeProvider theme={darkTheme}>
@@ -76,7 +87,7 @@ const ApplicationBar = ({
             variant="contained"
             style={{ marginRight: "10vh", backgroundColor: "darkviolet" }}
             startIcon={<Add />}
-            onClick={() => setIsAddingPost(true)}
+            onClick={() => onAddPostClick()}
           >
             הוסף פוסט
           </Button>
@@ -84,14 +95,14 @@ const ApplicationBar = ({
             variant="h6"
             noWrap
             component="div"
-            style={{marginRight: "50vh"}}
+            style={{ marginRight: "50vh" }}
             sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
           >
             On My Plate
           </Typography>
         </Toolbar>
       </AppBar>
-     </ThemeProvider>
+    </ThemeProvider>
   );
 };
 

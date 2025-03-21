@@ -18,6 +18,8 @@ const MainPage = () => {
   const [maxAmount, setMaxAmount] = useState<number>(0);
   const [isFetchingPosts, setIsFetchingPosts] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isNewPost, setIsNewPost] = useState(true);
+  const [editPost, setEditPost] = useState<Post>();
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -79,14 +81,16 @@ const MainPage = () => {
   return (
     <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
       {isAddingPost ? (
-        <AddPostPage setIsAddingPost={setIsAddingPost} isNewPost={true} />
+        <AddPostPage setIsAddingPost={setIsAddingPost} isNewPost={isNewPost} post={editPost}/>
       ) : isEditingProfile ? (
         <SignUpPage user={user!} onFinish={() => setIsEditingProfile(false)} />
       ) : (
         <>
           <ApplicationBar
             setIsAddingPost={setIsAddingPost}
+            setIsNewPost={setIsNewPost}
             setIsEditingProfile={setIsEditingProfile}
+            setEditPost={setEditPost}
           />
           <div
             style={{
@@ -113,7 +117,8 @@ const MainPage = () => {
               <Grid container spacing={8}>
                 {filteredPosts.map((post, i) => (
                   <Grid size={4} key={post._id}>
-                    <PostTeaser post={post} onPostClick={onPostClick} />
+                    <PostTeaser post={post} onPostClick={onPostClick} isEditable={true}
+                      setIsAddingPost={setIsAddingPost} setIsNewPost={setIsNewPost} setEditPost={setEditPost}/>
                   </Grid>
                 ))}
               </Grid>

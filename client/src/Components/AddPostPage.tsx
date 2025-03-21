@@ -27,15 +27,16 @@ import RestaurantSelectionDialog from "./SignPage/RestaurantSelectionDialog";
 type AddPostPageProps = {
   setIsAddingPost: React.Dispatch<React.SetStateAction<boolean>>;
   isNewPost: boolean;
+  post?: Post;
 };
 
-const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
-  const [restaurantName, setRestaurantName] = useState<string>("");
+const AddPostPage = ({ setIsAddingPost, isNewPost, post }: AddPostPageProps) => {
+  const [restaurantName, setRestaurantName] = useState<string>(post?.restaurantName ?? "");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [rating, setRating] = useState<number>(0);
-  const [description, setDescription] = useState<string>("");
+  const [rating, setRating] = useState<number>(post?.rating ?? 0);
+  const [description, setDescription] = useState<string>(post?.description ?? "");
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [imagesUrl, setImagesUrl] = useState<string[]>([]);
+  const [imagesUrl, setImagesUrl] = useState<string[]>(post?.photosUrl ?? []);
   const [restaurantOptions, setRestaurantOptions] = useState<GoogleMapApiRes[]>(
     []
   );
@@ -48,7 +49,6 @@ const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
     const response = await findRestaurantByName({
       input: restaurantName,
     });
-
     if (axios.isAxiosError(response)) setErrorMessage("חלה תקלה, נא נסה שנית");
     else {
       const restaurants = response as GoogleMapApiRes[];
@@ -73,9 +73,6 @@ const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
         photosUrl: [],
       });
 
-      console.log({ response });
-      console.log({ imagesUrl });
-
       if (axios.isAxiosError(response)) {
         setErrorMessage("חלה תקלה בשמירת הפוסט");
         return;
@@ -88,8 +85,6 @@ const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
         )
       );
 
-      console.log({ files });
-
       const photosUrl = files.map((file) => postId + "_" + file.name);
 
       await uploadPostPictures(postId, files);
@@ -97,6 +92,7 @@ const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
 
       setIsAddingPost(false);
     } else {
+
     }
   };
 
@@ -129,7 +125,7 @@ const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
   return (
     <>
       <SignPageWrapper
-        title={"הוסף פוסט"}
+        title={isNewPost ? "הוסף פוסט" : "ערוך פוסט"}
         errorMessage={errorMessage}
         setErrorMessage={setErrorMessage}
       >
@@ -150,14 +146,13 @@ const AddPostPage = ({ setIsAddingPost, isNewPost }: AddPostPageProps) => {
             gap: "10px",
           }}
         >
-          <div style={{ height: '20vh' }}>
             <ImagesList
               isAbleToAdd={!isLoading}
               imagesUrl={imagesUrl}
               setImagesUrl={setImagesUrl}
               setErrorMessage={setErrorMessage}
+              height={"20vh"}
             />
-          </div>
           <Box
             component="form"
             noValidate

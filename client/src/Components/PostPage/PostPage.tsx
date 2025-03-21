@@ -5,12 +5,7 @@ import axios from "axios";
 import { Post } from "../../Types/postTypes";
 import { Comment } from "../../Types/commentTypes";
 import CommentBox from "./CommentSection";
-import { Height } from "@mui/icons-material";
 import ImagesList from "../ImagesList";
-// type RestaurantSelectionDialogProps = {
-//     options: GoogleMapApiRes[];
-//     handleSelect: (selectedOption: GoogleMapApiRes) => void;
-// };
 
 const PostPage = () => {
     const { id } = useParams();
@@ -57,11 +52,7 @@ const PostPage = () => {
                             imagesUrl={imagesList}
                             setImagesUrl={setImagesList}
                             setErrorMessage={setErrorMessage}
-                        // src={`${process.env.REACT_APP_SERVER_URL}/media/posts/${restaurant.photosUrl[0]}`}
-                        // alt="post"
-                        // style={{width: '60vw',
-                        //     height: '90vh',
-                        //     borderRadius: '8px',}}
+                            height={"80vh"}
                         />
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
@@ -102,7 +93,6 @@ const styles = {
         borderRadius: '8px',
     },
     detailsContainer: {
-        // flex: '2',
         display: 'flex',
         flexDirection: 'column',
     },

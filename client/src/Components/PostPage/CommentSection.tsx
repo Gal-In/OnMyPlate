@@ -84,7 +84,7 @@ const CommentBox = ({ post, comments }: CommentsSectionProps) => {
                     <SingleComment comment={comment} key={comment._id}/>
                 ))}
 
-                {!newComments.length && (
+                {newComments.length ? !newComments.length : !comments.length && (
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
                         אין תגובות עדיין
                     </Typography>
