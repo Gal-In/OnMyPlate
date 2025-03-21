@@ -27,10 +27,9 @@ export const AuthApiContextProvider = ({
       refreshToken,
       setAccessToken,
       (newRefreshToken: string | null) => {
-        removeCookie("refreshToken");
-
         if (newRefreshToken)
           setCookie("refreshToken", newRefreshToken, { path: "/" });
+        else removeCookie("refreshToken");
       }
     );
   }, []);
