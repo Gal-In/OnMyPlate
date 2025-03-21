@@ -44,7 +44,11 @@ const CardWrapper = ({
       position="relative"
     >
       <Card variant="outlined">
-        <Typography component="h1" variant="h4" sx={{ width: "100%" }}>
+        <Typography
+          component="h1"
+          variant="h4"
+          sx={{ width: "100%", textAlign: "center" }}
+        >
           {title}
         </Typography>
         {children}

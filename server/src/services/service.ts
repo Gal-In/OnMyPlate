@@ -3,6 +3,7 @@ import { Document } from "mongoose";
 import axios from "axios";
 
 export const relevantUserInfo = (user: Document & User) => ({
+  _id: user.id,
   name: user.name,
   username: user.username,
   email: user.email,

@@ -146,13 +146,13 @@ const AddPostPage = ({ setIsAddingPost, isNewPost, post }: AddPostPageProps) => 
             gap: "10px",
           }}
         >
-            <ImagesList
-              isAbleToAdd={!isLoading}
-              imagesUrl={imagesUrl}
-              setImagesUrl={setImagesUrl}
-              setErrorMessage={setErrorMessage}
-              height={"20vh"}
-            />
+          <ImagesList
+            isAbleToAdd={!isLoading}
+            imagesUrl={imagesUrl}
+            setImagesUrl={setImagesUrl}
+            setErrorMessage={setErrorMessage}
+            height={"20vh"}
+          />
           <Box
             component="form"
             noValidate

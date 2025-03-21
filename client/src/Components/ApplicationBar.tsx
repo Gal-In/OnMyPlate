@@ -16,6 +16,7 @@ import { useMemo } from "react";
 import { logoutUser } from "../Services/serverRequests";
 import { Add } from "@mui/icons-material";
 import { Post } from "../Types/postTypes";
+import { useNavigate } from "react-router-dom";
 
 type ApplicationBarProps = {
   setIsAddingPost: React.Dispatch<React.SetStateAction<boolean>>;
@@ -26,9 +27,9 @@ type ApplicationBarProps = {
 
 const darkTheme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: "dark",
     primary: {
-      main: '#5c5b5c',
+      main: "#5c5b5c",
     },
   },
 });
@@ -41,10 +42,12 @@ const ApplicationBar = ({
 }: ApplicationBarProps) => {
   const [{ refreshToken }, _, removeCookie] = useCookies(["refreshToken"]);
   const { user, setUser, setAccessToken } = useUser();
+  const navigate = useNavigate();
 
   const logout = () => {
     logoutUser(refreshToken);
 
+    navigate("/signIn");
     removeCookie("refreshToken");
     setAccessToken(null);
     setUser(null);
@@ -75,10 +78,12 @@ const ApplicationBar = ({
           </Tooltip>
           <Tooltip title={"ערוך פרופיל"}>
             <IconButton sx={{ p: 1 }} onClick={() => setIsEditingProfile(true)}>
-              <Avatar
+              <img
+                alt="appBar"
                 src={imageUrl}
-                sx={{
-                  "& img": { objectFit: "fill" },
+                style={{
+                  objectFit: "fill",
+                  maxHeight: "50px",
                 }}
               />
             </IconButton>
