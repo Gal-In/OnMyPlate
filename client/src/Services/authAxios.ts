@@ -26,10 +26,12 @@ class AxiosManager {
 
   setAccessTokenFunc = (newAccessToken: string) => {
     this.accessToken = newAccessToken;
+    this.setAccessToken(newAccessToken);
   };
 
   setRefreshTokenFunc = (newRefreshToken: string) => {
     this.refreshToken = newRefreshToken;
+    this.setRefreshToken(newRefreshToken);
   };
 
   initToken = async () => {

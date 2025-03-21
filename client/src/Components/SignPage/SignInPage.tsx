@@ -42,7 +42,6 @@ const SignInPgae = () => {
       authManager.setAccessTokenFunc(userInfo.accessToken);
       authManager.setRefreshTokenFunc(userInfo.refreshToken);
 
-      setCookie("refreshToken", userInfo.refreshToken);
       setUser({
         _id: "",
         username,

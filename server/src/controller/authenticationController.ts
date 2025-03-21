@@ -170,6 +170,7 @@ const registration = async (req: Request, res: Response) => {
     });
 
     const tokens = generateTokens(newUser);
+    await setUserRefreshTokens(newUser._id, [tokens.refreshToken]);
 
     res.status(201).send({ ...relevantUserInfo(newUser), ...tokens });
   } catch (error) {
@@ -259,6 +260,7 @@ const googleRegistration = async (req: Request, res: Response) => {
     );
 
     const tokens = generateTokens(newUser);
+    await setUserRefreshTokens(newUser._id, [tokens.refreshToken]);
 
     res.status(201).send({ ...newUserInfo, ...tokens });
   } else {
