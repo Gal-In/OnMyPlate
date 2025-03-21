@@ -25,12 +25,12 @@ type CommentsSectionProps = {
 
 const CommentBox = ({ post, comments }: CommentsSectionProps) => {
     const [comment, setComment] = useState("");
-    const [newComments, setNewComments] = useState(comments);
+    const [newComments, setNewComments] = useState<Comment[]>(comments);
     const { addNewComment } = useAuthenticatedServerRequest();
 
     useEffect(() => {
         setNewComments(comments);
-    },[])
+    },[comments])
 
     const handleAddComment = async () => {
         if (!comment.trim()) return;
@@ -42,7 +42,7 @@ const CommentBox = ({ post, comments }: CommentsSectionProps) => {
         if (axios.isAxiosError(response)) {
             return;
         }
-        setNewComments([newComment, ...comments]);
+        setNewComments((prev) => [...prev, newComment]);
         setComment('');
     };
 
@@ -79,12 +79,12 @@ const CommentBox = ({ post, comments }: CommentsSectionProps) => {
                     הוסף
                 </Button>
             </Stack>
-            <Box sx={{height: '30vh', overflowY: 'scroll'}}>
-                {(newComments.length ? newComments : comments).map((comment: Comment) => (
+            <Box sx={{height: '30vh', overflowY: 'auto'}}>
+                {newComments.map((comment: Comment) => (
                     <SingleComment comment={comment} key={comment._id}/>
                 ))}
 
-                {newComments.length ? !newComments.length : !comments.length && (
+                { !newComments.length  && (
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
                         אין תגובות עדיין
                     </Typography>
