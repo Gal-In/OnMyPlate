@@ -46,7 +46,7 @@ const PostPage = () => {
         <div style={{ padding: '20px', width: '90vw' }}>
             {restaurant ?
                 <div style={styles.content}>
-                    <div style={styles.imageContainer}>
+                    <div style={styles.imageContainer} dir='rtl'>
                         <ImagesList
                             isAbleToAdd={false}
                             imagesUrl={imagesList}
@@ -62,7 +62,7 @@ const PostPage = () => {
                             <h3> {`דירוג מגוגל -  ${restaurant.googleApiRating}`} </h3>
                         </div>
                         
-                        <p>{restaurant.description}</p>
+                        <p style={{width: '24vw', maxHeight: '8vh', direction: 'rtl', overflowY: 'auto'}}>{restaurant.description}</p>
                         <h2>תגובות</h2>
                         <CommentBox comments={comments} post={restaurant} />
                     </div>
