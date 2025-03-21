@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useMemo } from "react";
+import React, { createContext, useContext, useEffect, useMemo } from "react";
 import { useUser } from "./useUser";
 import { useCookies } from "react-cookie";
 import AxiosManager from "../Services/authAxios";
+import { useLocation, useNavigate } from "react-router-dom";
 
 type AuthApiContextProviderProps = {
   children: React.ReactNode;
@@ -14,17 +15,45 @@ export const AuthApiContextProvider = ({
 }: AuthApiContextProviderProps) => {
   const { accessToken, setAccessToken } = useUser();
   const [{ refreshToken }, setCookie] = useCookies(["refreshToken"]);
+  const { setUser } = useUser();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const authAxiosInstance = useMemo(
-    () =>
-      new AxiosManager(
-        accessToken,
-        refreshToken,
-        setAccessToken,
-        (newRefreshToken: string) => setCookie("refreshToken", newRefreshToken)
-      ),
-    [accessToken, refreshToken]
-  );
+  const authAxiosInstance = useMemo(() => {
+    return new AxiosManager(
+      accessToken,
+      refreshToken,
+      setAccessToken,
+      (newRefreshToken: string) => setCookie("refreshToken", newRefreshToken)
+    );
+  }, []);
+
+  useEffect(() => {
+    const initUser = async () => {
+      const pathName = location.pathname.toLocaleLowerCase();
+
+      if (authAxiosInstance) {
+        const user = await authAxiosInstance.initToken();
+
+        if (user) {
+          if (
+            pathName === "/signin" ||
+            pathName === "/signup" ||
+            pathName === "/"
+          )
+            navigate("/main");
+
+          setUser(user);
+        } else {
+          if (pathName !== "/signin" && pathName !== "/signup") {
+            navigate("/signIn");
+          }
+        }
+      }
+    };
+
+    initUser();
+  }, [authAxiosInstance]);
 
   return (
     <AuthApiContext.Provider value={authAxiosInstance}>

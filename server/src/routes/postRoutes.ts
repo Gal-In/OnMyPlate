@@ -180,11 +180,7 @@ router.get("/sender=/:senderId/:skip/:limit", post.getPostsBySenderId);
  *          500:
  *              description: Server Error
  */
-router.get(
-  "/:skip/:limit",
-  authenticationController.authenticate,
-  post.getPosts
-);
+router.get("/:skip/:limit", post.getPosts);
 
 /**
  * @swagger

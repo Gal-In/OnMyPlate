@@ -25,6 +25,7 @@ import { User, UserRequestResponse } from "../../Types/userTypes";
 import { Close, Edit } from "@mui/icons-material";
 import { useAuthenticatedServerRequest } from "../../Services/useAuthenticatedServerRequest";
 import { useNavigate } from "react-router-dom";
+import { useAuthApi } from "../../Context/useAuthApi";
 
 type SignUpPageProps = {
   user?: User | null;
@@ -45,7 +46,8 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
   const [requestErrorMessage, setRequestErrorMessage] = useState<string>("");
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
 
-  const { setUser, setAccessToken } = useUser();
+  const { setUser } = useUser();
+  const authManager = useAuthApi();
   const { updateUser } = useAuthenticatedServerRequest();
   const navigate = useNavigate();
   const googleLogin = useGoogleLogin({
@@ -61,6 +63,8 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
       setRequestErrorMessage(`שים לב, חשבון גוגל זה כבר קיים`);
     } else {
       const userInfo = response as UserRequestResponse;
+      authManager.setAccessTokenFunc(userInfo.accessToken);
+      authManager.setRefreshTokenFunc(userInfo.refreshToken);
       setUser({
         _id: "",
         username: userInfo.username,
@@ -69,7 +73,6 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
         isGoogleUser: userInfo.isGoogleUser,
         profilePictureExtension: userInfo.profilePictureExtension,
       });
-      setAccessToken(userInfo.accessToken);
     }
   };
 
@@ -126,7 +129,9 @@ const SignUpPage = ({ user, onFinish }: SignUpPageProps) => {
         profilePictureExtension: userInfo.profilePictureExtension,
       });
 
-      setAccessToken(userInfo.accessToken);
+      authManager.setAccessTokenFunc(userInfo.accessToken);
+      authManager.setRefreshTokenFunc(userInfo.refreshToken);
+
       navigate("/main");
     }
   };
