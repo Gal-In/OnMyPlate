@@ -173,7 +173,7 @@ const MainPage = () => {
               <Grid container spacing={8}>
                 {filteredPosts.map((post) => (
                   <Grid size={4} key={post._id}>
-                    <PostTeaser post={post} onPostClick={onPostClick} isEditable={true}
+                    <PostTeaser post={post} onPostClick={onPostClick} isEditable={gridState === "myPosts"}
                       setIsAddingPost={setIsAddingPost} setIsNewPost={setIsNewPost} setEditPost={setEditPost}/>
                   </Grid>
                 ))}

@@ -91,8 +91,25 @@ const AddPostPage = ({ setIsAddingPost, isNewPost, post }: AddPostPageProps) => 
       await updatePost(postId, { photosUrl });
 
       setIsAddingPost(false);
-    } else {
+    } else if(post){
+      const response = await updatePost(post?._id, {        
+        description,
+        restaurantName,
+        rating,
+        googleApiRating: selectedRestaurant.rating,
+        photosUrl: [],})
 
+      const postId = (response as Post)._id;
+      const files = await Promise.all(
+        imagesUrl.map((imageUrl, index) =>
+          dataUrlToFile(imageUrl, index.toString())
+        )
+      );
+      const photosUrl = files.map((file) => postId + "_" + file.name);
+
+      await uploadPostPictures(postId, files);
+      await updatePost(postId, { photosUrl });
+      setIsAddingPost(false);
     }
   };
 
@@ -234,7 +251,7 @@ const AddPostPage = ({ setIsAddingPost, isNewPost, post }: AddPostPageProps) => 
                 alignSelf: "center",
               }}
             >
-              הוסף פוסט
+              { isNewPost ? "הוסף פוסט" : "ערוך פוסט" }
             </Button>
           </Box>
         </div>
