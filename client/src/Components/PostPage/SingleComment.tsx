@@ -34,7 +34,7 @@ const SingleComment = ({ comment }: CommentProps) => {
     return (
         <Card key={comment.message} variant="outlined" sx={{ mb: 2 }}>
             <CardHeader
-                avatar={<Avatar src={commentUser?.profilePictureExtension} alt={"profile"} />}
+                avatar={<Avatar src={`${process.env.REACT_APP_SERVER_URL}/media/profile/${commentUser?.email}.${commentUser?.profilePictureExtension}`} alt={"profile"} />}
                 title={<Typography variant="subtitle1" style={{ marginLeft: "2vh" }}>{commentUser?.username}</Typography>}
                 subheader={<Typography variant="body2" style={{ marginLeft: "2vh" }}>{comment.message}</Typography>}
             />

@@ -83,7 +83,7 @@ const ImagesList = ({
                 padding: "10px",
               }}
             >
-              {!!imagesUrl.length && (
+              {(!!imagesUrl.length && isAbleToAdd) && (
                 <IconButton
                   sx={{
                     position: "absolute",

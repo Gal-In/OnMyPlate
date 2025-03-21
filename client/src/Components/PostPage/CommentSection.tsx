@@ -79,7 +79,7 @@ const CommentBox = ({ post, comments }: CommentsSectionProps) => {
                     הוסף
                 </Button>
             </Stack>
-            <Box>
+            <Box sx={{height: '30vh', overflowY: 'scroll'}}>
                 {(newComments.length ? newComments : comments).map((comment: Comment) => (
                     <SingleComment comment={comment} key={comment._id}/>
                 ))}

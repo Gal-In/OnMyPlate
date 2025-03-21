@@ -15,8 +15,8 @@ const PostPage = () => {
     const [imagesList, setImagesList] = useState(restaurant?.photosUrl.map(url => `${process.env.REACT_APP_SERVER_URL}/media/posts/${url}`) ?? [])
 
     useEffect(() => {
-        if(restaurant)
-        setImagesList(restaurant.photosUrl.map(url => `${process.env.REACT_APP_SERVER_URL}/media/posts/${url}`));
+        if (restaurant)
+            setImagesList(restaurant.photosUrl.map(url => `${process.env.REACT_APP_SERVER_URL}/media/posts/${url}`));
     }, restaurant?.photosUrl)
     useEffect(() => {
         const getRestaurant = async () => {
@@ -57,8 +57,12 @@ const PostPage = () => {
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                         <h1>{restaurant.restaurantName}</h1>
+                        <div style={{display: 'flex', width: '15vw', justifyContent: 'space-between'}}>
+                            <h3> {`דירוג - ${restaurant.rating}`} </h3>
+                            <h3> {`דירוג מגוגל -  ${restaurant.googleApiRating}`} </h3>
+                        </div>
+                        
                         <p>{restaurant.description}</p>
-
                         <h2>תגובות</h2>
                         <CommentBox comments={comments} post={restaurant} />
                     </div>
