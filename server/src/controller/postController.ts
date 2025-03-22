@@ -86,15 +86,16 @@ const getAmountOfPosts = async (req: Request, res: Response) => {
   }
 };
 
-
 const removePost = async (req: Request, res: Response) => {
   const { postId } = req.body;
 
   const userId = req.params.userId;
-  console.log(postId, userId);
-  
+
   try {
-    const post = await postModel.findOneAndDelete({ _id: postId, senderId: userId });
+    const post = await postModel.findOneAndDelete({
+      _id: postId,
+      senderId: userId,
+    });
 
     res.status(200).send(post);
   } catch (error) {
