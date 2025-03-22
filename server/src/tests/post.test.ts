@@ -138,7 +138,7 @@ describe("Test Posts API", () => {
   });
 
   test("Test get all 3 posts", async () => {
-    const allPosts = await request(app).get("/posts");
+    const allPosts = await request(app).get("/posts/0/10");
 
     expect(allPosts.body.length).toEqual(3);
     expect(allPosts.statusCode).toEqual(200);

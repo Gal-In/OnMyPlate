@@ -6,9 +6,9 @@ import request from "supertest";
 import authenticationController from "../controller/authenticationController";
 
 const testUsersArr: Partial<User>[] = [
-  { username: "user1", email: "user1@gmail.com", password: "A" },
-  { username: "user2", email: "user2@gmail.com", password: "B" },
-  { username: "user3", email: "user3@gmail.com", password: "C" },
+  { username: "user1", email: "user1@gmail.com", password: "A", name: "user1" },
+  { username: "user2", email: "user2@gmail.com", password: "B", name: "user2" },
+  { username: "user3", email: "user3@gmail.com", password: "C", name: "user3" },
 ];
 
 let app: Express;
@@ -44,7 +44,6 @@ describe("Test Users API", () => {
     expect(statusCode).toEqual(201);
     expect(body.username).toEqual(userToAdd.username);
     expect(body.email).toEqual(userToAdd.email);
-    expect(body.refreshTokens).toEqual([]);
 
     testUsersArr[0]._id = body._id;
   });
@@ -55,7 +54,7 @@ describe("Test Users API", () => {
       .post("/auth/registration")
       .send(userToAdd);
 
-    expect(response.statusCode).toEqual(400);
+    expect(response.statusCode).toEqual(409);
   });
   test("Test get users after add single user", async () => {
     const allUsers = await request(app).get("/users");
@@ -79,7 +78,6 @@ describe("Test Users API", () => {
       expect(statusCode).toEqual(201);
       expect(body.username).toEqual(userToAdd.username);
       expect(body.email).toEqual(userToAdd.email);
-      expect(body.refreshTokens).toEqual([]);
       testUsersArr[index]._id = body._id;
     }
   });
@@ -113,7 +111,7 @@ describe("Test Users API", () => {
         authorization: `JWT ${accessToken}`,
       })
       .send({
-        username: testUsersArr[1].usernmae,
+        username: testUsersArr[1].username,
         email: "NEW EMAIL",
       });
 

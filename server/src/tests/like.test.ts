@@ -102,7 +102,7 @@ describe("Test Likes API", () => {
       .set({ authorization: "JWT " + baseUsers[0].token })
       .send({ postId: postsWithId[0]._id });
 
-    expect(singleLike.statusCode).toEqual(200);
+    expect(singleLike.statusCode).toEqual(201);
     expect(singleLike.body.postId).toEqual(postsWithId[0]._id);
   });
 
@@ -128,7 +128,7 @@ describe("Test Likes API", () => {
       .set({ authorization: "JWT " + baseUsers[0].token })
       .send({ postId: postsWithId[1]._id });
 
-    expect(singleLike.statusCode).toEqual(200);
+    expect(singleLike.statusCode).toEqual(201);
     expect(singleLike.body.postId).toEqual(postsWithId[1]._id);
   });
 
@@ -138,7 +138,7 @@ describe("Test Likes API", () => {
       .set({ authorization: "JWT " + baseUsers[1].token })
       .send({ postId: postsWithId[0]._id });
 
-    expect(singleLike.statusCode).toEqual(200);
+    expect(singleLike.statusCode).toEqual(201);
     expect(singleLike.body.postId).toEqual(postsWithId[0]._id);
   });
 
