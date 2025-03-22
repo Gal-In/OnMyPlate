@@ -21,7 +21,10 @@ const options = {
       version: "1.0.0",
       description: "rest server description",
     },
-    servers: [{ url: "http://localhost:8000" }],
+    servers: [{ url: `http://localhost:443` }, 
+      {url: "http://10.10.246.64:443"},
+      {url: "https://10.10.246.64:443"}
+    ],
   },
   apis: ["./src/routes/*.ts"],
 };
@@ -46,6 +49,7 @@ app.use("/like", likeRoutes);
 
 app.use("/file", fileRoutes);
 app.use("/media", express.static("media"));
+app.use(express.static("front"));
 
 app.use("/googleApi", googleApiRoutes);
 
