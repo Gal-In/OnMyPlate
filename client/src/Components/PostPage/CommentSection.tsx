@@ -64,8 +64,9 @@ const CommentBox = ({ post, comments }: CommentsSectionProps) => {
         >
             <Stack direction="row" spacing={2}>
                 <TextField
+                    dir='rtl'
                     fullWidth
-                    label="...הוסף תגובה"
+                    label="הוסף תגובה..."
                     variant="outlined"
                     value={comment}
                     onChange={handleInputChange}

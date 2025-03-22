@@ -12,6 +12,7 @@ import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
 import cors from "cors";
 import googleApiRoutes from "./routes/googleApiRoutes";
+const path = require("path")
 
 const options = {
   definition: {
@@ -50,11 +51,18 @@ app.use("/like", likeRoutes);
 app.use("/file", fileRoutes);
 app.use("/media", express.static("media"));
 app.use(express.static("front"));
+// app.use("/restaurant", express.static("front"));
+// app.use("/restaurant/", express.static("front"));
+// app.use("/signup", express.static("front"));
+// app.use("/signin", express.static("front"));
+// app.use("/main", express.static("front"));
 
 app.use("/googleApi", googleApiRoutes);
 
 const specs = swaggerJsDoc(options);
-app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs))
+
+app.get('*', (req, res) => { res.sendFile(path.resolve(__dirname, '../front', 'index.html')); });;
 
 const initApp = () =>
   new Promise<Express>((resolve, reject) => {

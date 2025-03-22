@@ -34,7 +34,7 @@ const MainPage = () => {
   };
 
   const filteredPosts = posts.filter((post) =>
-    post.restaurantName.toLowerCase().includes(searchTerm.toLowerCase())
+    post.restaurantName?.toLowerCase().includes(searchTerm?.toLowerCase())
   );
 
   useEffect(() => {
