@@ -15,9 +15,11 @@ type TestUser = User & {
 };
 
 const userBaseDetails = {
+  name: "user",
   username: "user",
   email: "user@test.com",
   password: "123",
+  isGoogleUser: false,
 };
 
 let testUser: TestUser | null = null;
@@ -81,18 +83,20 @@ describe("Authentication Tests", () => {
   });
   test("test request authentication", async () => {
     const allPostsResponse = await request(app).post("/posts").send({
-      title: "post",
-      content: "content",
-      senderId: "12345678",
+      description: "post content 1",
+      restaurantName: "restaurant name 1",
+      rating: 4,
+      googleApiRating: 4.2,
     });
     expect(allPostsResponse.statusCode).not.toBe(201);
     const allPostsResponseWithAuth = await request(app)
       .post("/posts")
       .set({ authorization: "JWT " + testUser!.accessToken })
       .send({
-        title: "post",
-        content: "content",
-        senderId: "12345678",
+        description: "post content 1",
+        restaurantName: "restaurant name 1",
+        rating: 4,
+        googleApiRating: 4.2,
       });
     expect(allPostsResponseWithAuth.statusCode).toBe(201);
   });
@@ -173,9 +177,10 @@ describe("Authentication Tests", () => {
         .post("/posts")
         .set({ authorization: "JWT " + testUser.accessToken })
         .send({
-          title: "post",
-          content: "content",
-          senderId: "user",
+          description: "post content 1",
+          restaurantName: "restaurant name 1",
+          rating: 4,
+          googleApiRating: 4.2,
         });
       expect(response4.statusCode).toBe(201);
     }

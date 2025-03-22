@@ -12,6 +12,7 @@ const testCommentsArr = [
 ];
 
 const USER_BASE_DETAILS = {
+  name: "dan",
   username: "dan",
   password: "dan123",
   email: "dan@gmail.com",
@@ -66,7 +67,6 @@ describe("Test Comments API", () => {
 
     commentId = singleComment.body._id;
   });
-
   test("Get all comments after add single comment", async () => {
     const allComments = await request(app).get("/comments");
 
