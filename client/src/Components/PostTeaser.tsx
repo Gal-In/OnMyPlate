@@ -90,7 +90,7 @@ const PostTeaser = ({ post, onPostClick, isEditable, setIsAddingPost, setIsNewPo
               <EditIcon/>
             </CardActions>}
           </div>
-          <Typography variant="body2" style={{direction: 'rtl'}}>{post.description}</Typography>
+          <Typography variant="body2" style={{direction: 'rtl',maxWidth: "23vw", height: '10vh', overflowY: 'auto'}}>{post.description}</Typography>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '2vh' }} onClick={() => onPostClick(post._id)}>
           <img

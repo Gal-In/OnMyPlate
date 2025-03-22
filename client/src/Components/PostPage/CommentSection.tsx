@@ -81,7 +81,7 @@ const CommentBox = ({ post, comments }: CommentsSectionProps) => {
             </Stack>
             <Box sx={{height: '30vh', overflowY: 'auto'}}>
                 {newComments.map((comment: Comment) => (
-                    <SingleComment comment={comment} key={comment._id}/>
+                    <SingleComment comment={comment} key={comment._id ?? comment.message}/>
                 ))}
 
                 { !newComments.length  && (

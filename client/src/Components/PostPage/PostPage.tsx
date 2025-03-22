@@ -17,7 +17,7 @@ const PostPage = () => {
     useEffect(() => {
         if (restaurant)
             setImagesList(restaurant.photosUrl.map(url => `${process.env.REACT_APP_SERVER_URL}/media/posts/${url}`));
-    }, restaurant?.photosUrl)
+    }, [restaurant?.photosUrl])
     useEffect(() => {
         const getRestaurant = async () => {
             if (id) {
